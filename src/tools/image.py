@@ -664,6 +664,9 @@ class OpenCVTool:
 
         try:
             img = cv2.imread(image_path)
+            if img is None:
+                logger.error("Failed to read image for grayscale conversion", path=image_path)
+                return None
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
             if output_path is None:
