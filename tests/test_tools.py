@@ -9,6 +9,7 @@ Tests the wrappers for:
 - Face analysis tools (DeepFace)
 """
 
+import pytest
 from pathlib import Path
 from unittest.mock import Mock, patch
 import tempfile
@@ -260,6 +261,17 @@ class TestSpacyTool:
 
         tool = SpacyTool(model_name="en_core_web_md")
         assert tool.model_name == "en_core_web_md"
+
+    def test_spacy_tool_invalid_model_name(self):
+        """Test SpacyTool rejects invalid model names."""
+        import pytest
+        from src.tools.nlp import SpacyTool
+
+        with pytest.raises(ValueError):
+            SpacyTool(model_name="invalid_model")
+
+        with pytest.raises(ValueError):
+            SpacyTool(model_name="../etc/passwd")
 
     def test_spacy_available_property(self):
         """Test available property."""

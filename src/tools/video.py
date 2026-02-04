@@ -84,12 +84,15 @@ class FFmpegTool:
                 "copy",
                 output_path,
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg resize failed", stderr=result.stderr)
                 return False
             logger.info("Video resized", input=input_path, output=output_path)
             return True
+        except subprocess.TimeoutExpired:
+            logger.error("FFmpeg resize timed out")
+            return False
         except Exception as e:
             logger.error("FFmpeg resize error", error=str(e))
             return False
@@ -145,12 +148,15 @@ class FFmpegTool:
                 f"overlay={overlay_pos}",
                 output_path,
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg watermark failed", stderr=result.stderr)
                 return False
             logger.info("Watermark added", video=video_path, output=output_path)
             return True
+        except subprocess.TimeoutExpired:
+            logger.error("FFmpeg watermark timed out")
+            return False
         except Exception as e:
             logger.error("FFmpeg watermark error", error=str(e))
             return False
@@ -182,12 +188,15 @@ class FFmpegTool:
                 cmd.extend(["-c:a", audio_codec])
             cmd.append(output_path)
 
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg convert failed", stderr=result.stderr)
                 return False
             logger.info("Video converted", input=input_path, output=output_path)
             return True
+        except subprocess.TimeoutExpired:
+            logger.error("FFmpeg convert timed out")
+            return False
         except Exception as e:
             logger.error("FFmpeg convert error", error=str(e))
             return False
@@ -228,12 +237,15 @@ class FFmpegTool:
                 "-shortest",
                 output_path,
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg merge failed", stderr=result.stderr)
                 return False
             logger.info("Audio and video merged", output=output_path)
             return True
+        except subprocess.TimeoutExpired:
+            logger.error("FFmpeg merge timed out")
+            return False
         except Exception as e:
             logger.error("FFmpeg merge error", error=str(e))
             return False
@@ -277,12 +289,15 @@ class FFmpegTool:
                 codec,
                 output_path,
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg extract audio failed", stderr=result.stderr)
                 return False
             logger.info("Audio extracted", video=video_path, output=output_path)
             return True
+        except subprocess.TimeoutExpired:
+            logger.error("FFmpeg extract audio timed out")
+            return False
         except Exception as e:
             logger.error("FFmpeg extract audio error", error=str(e))
             return False
@@ -308,7 +323,7 @@ class FFmpegTool:
                 "-show_streams",
                 video_path,
             ]
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
             if result.returncode != 0:
                 logger.error("FFprobe failed", stderr=result.stderr)
                 return None
@@ -316,6 +331,9 @@ class FFmpegTool:
             import json
 
             return json.loads(result.stdout)
+        except subprocess.TimeoutExpired:
+            logger.error("FFprobe timed out")
+            return None
         except Exception as e:
             logger.error("FFprobe error", error=str(e))
             return None
@@ -332,7 +350,7 @@ class MoviePyTool:
     - Adding audio to video
     """
 
-    def __init__(self, output_dir: str = "./output"):
+    def __init__(self, output_dir: str = "./output/videos"):
         """
         Initialize MoviePy tool.
 
@@ -377,6 +395,9 @@ class MoviePyTool:
             logger.error("MoviePy not available")
             return None
 
+        video = None
+        final = None
+        txt_clips = []
         try:
             video = VideoFileClip(video_path)
             clips = [video]
@@ -391,6 +412,7 @@ class MoviePyTool:
                 txt_clip = txt_clip.set_position(("center", "bottom"))
                 txt_clip = txt_clip.set_start(caption["start"])
                 txt_clip = txt_clip.set_duration(caption["end"] - caption["start"])
+                txt_clips.append(txt_clip)
                 clips.append(txt_clip)
 
             final = CompositeVideoClip(clips)
@@ -401,14 +423,29 @@ class MoviePyTool:
                 )
 
             final.write_videofile(output_path, codec="libx264", audio_codec="aac")
-            video.close()
-            final.close()
 
             logger.info("Captions added", input=video_path, output=output_path)
             return output_path
         except Exception as e:
             logger.error("Add captions failed", error=str(e))
             return None
+        finally:
+            # Ensure all clips are closed to prevent resource leaks
+            for txt_clip in txt_clips:
+                try:
+                    txt_clip.close()
+                except Exception:
+                    pass
+            if final is not None:
+                try:
+                    final.close()
+                except Exception:
+                    pass
+            if video is not None:
+                try:
+                    video.close()
+                except Exception:
+                    pass
 
     def create_video_from_image(
         self,
@@ -433,6 +470,8 @@ class MoviePyTool:
             logger.error("MoviePy not available")
             return None
 
+        clip = None
+        audio = None
         try:
             clip = ImageClip(image_path).set_duration(duration)
 
@@ -446,13 +485,24 @@ class MoviePyTool:
                 )
 
             clip.write_videofile(output_path, fps=24, codec="libx264")
-            clip.close()
 
             logger.info("Video created from image", image=image_path, output=output_path)
             return output_path
         except Exception as e:
             logger.error("Create video from image failed", error=str(e))
             return None
+        finally:
+            # Ensure clips are closed to prevent resource leaks
+            if audio is not None:
+                try:
+                    audio.close()
+                except Exception:
+                    pass
+            if clip is not None:
+                try:
+                    clip.close()
+                except Exception:
+                    pass
 
     def concatenate_videos(
         self,
@@ -475,6 +525,8 @@ class MoviePyTool:
             logger.error("MoviePy not available")
             return None
 
+        clips = []
+        final = None
         try:
             clips = [VideoFileClip(path) for path in video_paths]
             final = concatenate_videoclips(clips, method="compose")
@@ -486,10 +538,6 @@ class MoviePyTool:
 
             final.write_videofile(output_path, codec="libx264", audio_codec="aac")
 
-            for clip in clips:
-                clip.close()
-            final.close()
-
             logger.info(
                 "Videos concatenated", count=len(video_paths), output=output_path
             )
@@ -497,6 +545,18 @@ class MoviePyTool:
         except Exception as e:
             logger.error("Concatenate videos failed", error=str(e))
             return None
+        finally:
+            # Ensure all clips are closed to prevent resource leaks
+            if final is not None:
+                try:
+                    final.close()
+                except Exception:
+                    pass
+            for clip in clips:
+                try:
+                    clip.close()
+                except Exception:
+                    pass
 
     def add_text_overlay(
         self,
@@ -527,6 +587,9 @@ class MoviePyTool:
             logger.error("MoviePy not available")
             return None
 
+        video = None
+        txt_clip = None
+        final = None
         try:
             video = VideoFileClip(video_path)
             txt_clip = TextClip(text, fontsize=fontsize, color=color)
@@ -545,11 +608,26 @@ class MoviePyTool:
                 )
 
             final.write_videofile(output_path, codec="libx264", audio_codec="aac")
-            video.close()
-            final.close()
 
             logger.info("Text overlay added", input=video_path, output=output_path)
             return output_path
         except Exception as e:
             logger.error("Add text overlay failed", error=str(e))
             return None
+        finally:
+            # Ensure all clips are closed to prevent resource leaks
+            if txt_clip is not None:
+                try:
+                    txt_clip.close()
+                except Exception:
+                    pass
+            if final is not None:
+                try:
+                    final.close()
+                except Exception:
+                    pass
+            if video is not None:
+                try:
+                    video.close()
+                except Exception:
+                    pass

@@ -459,7 +459,7 @@ class WhisperTool:
     - Creating SRT subtitle files
     """
 
-    def __init__(self, model_name: str = "base", output_dir: str = "./output"):
+    def __init__(self, model_name: str = "base", output_dir: str = "./output/captions"):
         """
         Initialize Whisper tool.
 

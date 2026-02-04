@@ -32,13 +32,26 @@ class SpacyTool:
     - Part-of-speech tagging
     """
 
+    # Valid spaCy model name pattern (e.g., en_core_web_sm, en_core_web_md, etc.)
+    VALID_MODEL_PATTERN = r"^[a-z]{2}_[a-z]+_[a-z]+_[a-z]{2,}$"
+
     def __init__(self, model_name: str = "en_core_web_sm"):
         """
         Initialize spaCy tool.
 
         Args:
             model_name: spaCy model to use (default: en_core_web_sm)
+
+        Raises:
+            ValueError: If model_name doesn't match expected spaCy model naming pattern
         """
+        import re
+
+        if not re.match(self.VALID_MODEL_PATTERN, model_name):
+            raise ValueError(
+                f"Invalid spaCy model name: {model_name}. "
+                "Expected format like 'en_core_web_sm', 'en_core_web_md', etc."
+            )
         self.model_name = model_name
         self._nlp = None
 
@@ -64,6 +77,7 @@ class SpacyTool:
                     subprocess.run(
                         ["python", "-m", "spacy", "download", self.model_name],
                         check=True,
+                        timeout=300,
                     )
                     self._nlp = spacy.load(self.model_name)
                 except Exception as e:
@@ -260,13 +274,22 @@ class SpacyTool:
         """
         Basic sentiment analysis using lexical features.
 
-        Note: For more accurate sentiment, use a dedicated model.
+        WARNING: This is a placeholder implementation using a simple word-matching
+        approach with a very limited vocabulary. It is NOT suitable for production
+        use and will produce unreliable results. For accurate sentiment analysis,
+        use a dedicated sentiment model such as:
+        - TextBlob
+        - VADER (Valence Aware Dictionary and sEntiment Reasoner)
+        - Hugging Face transformers (e.g., distilbert-base-uncased-finetuned-sst-2-english)
+        - spaCy's textcat component with a trained model
 
         Args:
             text: Input text
 
         Returns:
-            Dict with basic text statistics or None if failed
+            Dict with basic text statistics and a rough sentiment indicator,
+            or None if failed. The sentiment_score is a very rough approximation
+            and should not be relied upon for any critical decisions.
         """
         if not SPACY_AVAILABLE:
             logger.error("spaCy not available")
@@ -280,7 +303,8 @@ class SpacyTool:
             doc = nlp(text)
 
             # Count positive/negative words (basic approach)
-            # In production, use a proper sentiment model
+            # WARNING: This is a very limited word list and should NOT be used
+            # for production sentiment analysis. Use a proper sentiment model instead.
             positive_words = {
                 "good",
                 "great",
@@ -331,9 +355,10 @@ class SpacyTool:
             analysis = {
                 "positive_count": positive_count,
                 "negative_count": negative_count,
-                "sentiment_score": sentiment_score,  # -1 to 1
+                "sentiment_score": sentiment_score,  # -1 to 1 (UNRELIABLE - see docstring)
                 "word_count": len(doc),
                 "sentence_count": len(list(doc.sents)),
+                "_warning": "This is a basic placeholder. Use a proper sentiment model for production.",
             }
 
             logger.info("Sentiment analyzed", text_length=len(text))

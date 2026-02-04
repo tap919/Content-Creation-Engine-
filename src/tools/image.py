@@ -27,7 +27,6 @@ except ImportError:
 # OpenCV import (optional)
 try:
     import cv2
-    import numpy as np
 
     OPENCV_AVAILABLE = True
 except ImportError:
@@ -506,6 +505,9 @@ class OpenCVTool:
 
         try:
             img = cv2.imread(image_path)
+            if img is None:
+                logger.error("Failed to read image", image=image_path)
+                return None
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
             face_cascade = self._get_face_cascade()
@@ -608,6 +610,7 @@ class OpenCVTool:
             logger.error("OpenCV not available")
             return None
 
+        cap = None
         try:
             if output_dir is None:
                 output_dir = str(self.output_dir / f"frames_{uuid.uuid4().hex[:8]}")
@@ -634,7 +637,6 @@ class OpenCVTool:
 
                 frame_count += 1
 
-            cap.release()
             logger.info(
                 "Frames extracted", video=video_path, count=len(frame_paths)
             )
@@ -642,6 +644,10 @@ class OpenCVTool:
         except Exception as e:
             logger.error("Frame extraction failed", error=str(e))
             return None
+        finally:
+            # Ensure VideoCapture is released to free resources
+            if cap is not None:
+                cap.release()
 
     def apply_grayscale(
         self,
@@ -773,7 +779,12 @@ class RembgTool:
 
             # Create new image with solid background
             background = Image.new("RGB", output_img.size, background_color)
-            background.paste(output_img, mask=output_img.split()[3])  # Use alpha as mask
+            # Use alpha channel as mask when available; otherwise paste without mask
+            bands = output_img.split()
+            if len(bands) >= 4:
+                background.paste(output_img, mask=bands[3])
+            else:
+                background.paste(output_img)
 
             if output_path is None:
                 output_path = str(
