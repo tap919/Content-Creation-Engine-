@@ -980,7 +980,7 @@ async function loadCampaignsList() {
     try {
         const response = await fetch(`${API_BASE}/api/campaigns`);
         if (response.ok) {
-            const campaigns = await response.json();
+            await response.json();
             // Update campaigns list UI
             // For now, the static demo data is shown
         }
