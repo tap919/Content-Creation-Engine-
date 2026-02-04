@@ -838,7 +838,14 @@ class BabyContentFactory:
         for clip in clips:
             # Extract audio from video clip first for transcription
             audio_clip = clip.replace('.mp4', '_audio.mp3')
-            subprocess.run(['ffmpeg', '-y', '-i', clip, '-vn', audio_clip], capture_output=True)
+            result = subprocess.run(
+                ['ffmpeg', '-y', '-i', video_path, '-vn', audio_clip],
+                capture_output=True,
+                text=True
+            )
+            if result.returncode != 0:
+                logger.warning("Failed to extract audio", clip=clip, stderr=result.stderr)
+                continue
             
             captions = self.transcriber.transcribe_with_timestamps(audio_clip)
             captioned = self.video_editor.add_captions(clip, captions, f"{clip}_captions.mp4")

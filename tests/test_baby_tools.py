@@ -16,7 +16,7 @@ class TestBabyToolsImport:
         from src.tools.baby_design import BabyCanva
         assert BabyCanva is not None
     
-    def test_import_baby_capcap(self):
+    def test_import_baby_capcut(self):
         """Test BabyCapCut import."""
         from src.tools.baby_video_editor import BabyCapCut
         assert BabyCapCut is not None

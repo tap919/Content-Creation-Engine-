@@ -361,30 +361,30 @@ class BabyCapCut:
             return None
         
         video = None
-        audio = None
+        background_music = None
         final = None
         
         try:
             video = VideoFileClip(video_path)
-            music = AudioFileClip(audio_path)
+            background_music = AudioFileClip(audio_path)
             
             # Loop music if shorter than video
-            if music.duration < video.duration:
-                n_loops = int(video.duration / music.duration) + 1
-                music = music.loop(n=n_loops)
+            if background_music.duration < video.duration:
+                n_loops = int(video.duration / background_music.duration) + 1
+                background_music = background_music.loop(n=n_loops)
             
             # Trim music to video length
-            music = music.subclip(0, video.duration)
+            background_music = background_music.subclip(0, video.duration)
             
             # Adjust volume
-            music = music.volumex(audio_volume)
+            background_music = background_music.volumex(audio_volume)
             
             # Mix with original audio if exists
             if video.audio:
                 from moviepy.audio.AudioClip import CompositeAudioClip
-                final_audio = CompositeAudioClip([video.audio, music])
+                final_audio = CompositeAudioClip([video.audio, background_music])
             else:
-                final_audio = music
+                final_audio = background_music
             
             # Set audio to video
             final = video.set_audio(final_audio)
@@ -420,9 +420,9 @@ class BabyCapCut:
                     video.close()
                 except:
                     pass
-            if audio:
+            if background_music:
                 try:
-                    audio.close()
+                    background_music.close()
                 except:
                     pass
     

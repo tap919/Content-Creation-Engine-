@@ -176,15 +176,17 @@ class BabyOpusClip:
                 logger.error("Audio extraction failed", stderr=result.stderr)
                 return None
             
-            # Transcribe
-            model = self._load_whisper_model()
-            result = model.transcribe(audio_path)
-            
-            # Clean up temp audio
-            Path(audio_path).unlink(missing_ok=True)
-            
-            logger.info("Video transcribed", video=video_path, segments=len(result.get('segments', [])))
-            return result
+            try:
+                # Transcribe
+                model = self._load_whisper_model()
+                result = model.transcribe(audio_path)
+                
+                logger.info("Video transcribed", video=video_path, segments=len(result.get('segments', [])))
+                return result
+                
+            finally:
+                # Clean up temp audio file
+                Path(audio_path).unlink(missing_ok=True)
             
         except Exception as e:
             logger.error("Transcription failed", error=str(e))
