@@ -443,8 +443,7 @@ class LibrosaTool:
             return None
 
         try:
-            y, sr = librosa.load(audio_path)
-            return float(librosa.get_duration(y=y, sr=sr))
+            return float(librosa.get_duration(filename=audio_path))
         except Exception as e:
             logger.error("Get duration failed", error=str(e))
             return None
