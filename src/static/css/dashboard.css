@@ -1427,10 +1427,12 @@ body::before {
     background: var(--success);
     border-color: var(--success);
     color: white;
+    font-size: 0;
 }
 
 .workflow-step.completed .workflow-step-number::after {
     content: '✓';
+    font-size: 11px;
 }
 
 .workflow-connector {
