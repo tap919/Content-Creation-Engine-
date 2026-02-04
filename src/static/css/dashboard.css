@@ -1204,3 +1204,397 @@ body::before {
     color: var(--text-muted);
     margin-bottom: 24px;
 }
+
+/* Help Bubble Tooltips */
+.help-bubble {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+}
+
+.help-bubble-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--bg-glass-light);
+    border: 1px solid var(--border-glass);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.help-bubble:hover .help-bubble-icon {
+    background: var(--accent-yellow);
+    color: var(--bg-primary);
+    border-color: var(--accent-yellow);
+}
+
+.help-bubble-content {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    max-width: 300px;
+    padding: 12px 16px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    text-align: left;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+    pointer-events: none;
+}
+
+.help-bubble-content::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0 8px;
+    border-style: solid;
+    border-color: var(--border-glass) transparent transparent transparent;
+}
+
+.help-bubble-content::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: var(--bg-glass) transparent transparent transparent;
+}
+
+.help-bubble:hover .help-bubble-content,
+.help-bubble:focus .help-bubble-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.help-bubble-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--accent-yellow);
+}
+
+.help-bubble-text {
+    color: var(--text-secondary);
+}
+
+/* Position variants for edge cases */
+.help-bubble-content.position-left {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+.help-bubble-content.position-left::before,
+.help-bubble-content.position-left::after {
+    left: auto;
+    right: 12px;
+    transform: translateX(0);
+}
+
+.help-bubble-content.position-right {
+    left: 0;
+    transform: translateX(0);
+}
+
+.help-bubble-content.position-right::before,
+.help-bubble-content.position-right::after {
+    left: 12px;
+    transform: translateX(0);
+}
+
+.help-bubble-content.position-bottom {
+    bottom: auto;
+    top: calc(100% + 10px);
+}
+
+.help-bubble-content.position-bottom::before {
+    bottom: auto;
+    top: -8px;
+    border-width: 0 8px 8px 8px;
+    border-color: transparent transparent var(--border-glass) transparent;
+}
+
+.help-bubble-content.position-bottom::after {
+    bottom: auto;
+    top: -6px;
+    border-width: 0 6px 6px 6px;
+    border-color: transparent transparent var(--bg-glass) transparent;
+}
+
+/* Campaign Workflow Styles */
+.workflow-pipeline {
+    display: flex;
+    gap: 8px;
+    padding: 24px 0;
+    overflow-x: auto;
+    position: relative;
+}
+
+.workflow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 140px;
+    position: relative;
+}
+
+.workflow-step-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--bg-glass-light);
+    border: 2px solid var(--border-glass);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: all var(--transition-fast);
+    position: relative;
+    z-index: 1;
+}
+
+.workflow-step.active .workflow-step-icon {
+    border-color: var(--accent-yellow);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.workflow-step.completed .workflow-step-icon {
+    border-color: var(--success);
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
+}
+
+.workflow-step-label {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.workflow-step.active .workflow-step-label {
+    color: var(--accent-yellow);
+}
+
+.workflow-step.completed .workflow-step-label {
+    color: var(--success);
+}
+
+.workflow-step-number {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-glass);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.workflow-step.completed .workflow-step-number {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+}
+
+.workflow-step.completed .workflow-step-number::after {
+    content: '✓';
+}
+
+.workflow-connector {
+    position: absolute;
+    top: 32px;
+    left: calc(50% + 40px);
+    width: calc(100% - 80px);
+    height: 2px;
+    background: var(--border-glass);
+}
+
+.workflow-step:last-child .workflow-connector {
+    display: none;
+}
+
+.workflow-step.completed .workflow-connector {
+    background: var(--success);
+}
+
+/* Campaign Card */
+.campaign-card {
+    padding: 20px;
+    background: var(--bg-glass-light);
+    border-radius: 16px;
+    border: 1px solid var(--border-glass);
+    margin-bottom: 16px;
+    transition: all var(--transition-fast);
+}
+
+.campaign-card:hover {
+    border-color: var(--accent-yellow);
+    box-shadow: var(--shadow-glow);
+}
+
+.campaign-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.campaign-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.campaign-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.campaign-status.draft {
+    background: rgba(74, 144, 217, 0.2);
+    color: var(--accent-blue);
+}
+
+.campaign-status.running {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--accent-yellow);
+}
+
+.campaign-status.completed {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--success);
+}
+
+.campaign-status.scheduled {
+    background: rgba(255, 152, 0, 0.2);
+    color: var(--warning);
+}
+
+.campaign-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.campaign-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.campaign-progress {
+    margin-top: 12px;
+}
+
+.campaign-progress-bar {
+    height: 6px;
+    background: var(--bg-glass);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.campaign-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-yellow) 0%, var(--success) 100%);
+    border-radius: 3px;
+    transition: width var(--transition-normal);
+}
+
+.campaign-progress-text {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Campaign Wizard */
+.wizard-step-content {
+    padding: 24px 0;
+}
+
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-glass);
+    margin-top: 24px;
+}
+
+.platform-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.platform-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: var(--bg-glass-light);
+    border: 2px solid var(--border-glass);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.platform-option:hover {
+    border-color: var(--accent-blue);
+}
+
+.platform-option.selected {
+    border-color: var(--accent-yellow);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+}
+
+.platform-option input {
+    display: none;
+}
+
+.platform-option-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.platform-option-name {
+    font-size: 14px;
+    font-weight: 500;
+}

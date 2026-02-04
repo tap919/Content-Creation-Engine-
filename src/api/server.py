@@ -397,4 +397,91 @@ def create_app(config: Config) -> FastAPI:
                    "Please try again in a future version.",
         )
     
+    # Campaign workflow endpoints
+    @app.get("/api/campaigns")
+    async def list_campaigns():
+        """
+        List all campaigns.
+        
+        Returns demo campaign data. In production, this would fetch from a database.
+        """
+        return {
+            "campaigns": [
+                {
+                    "id": "camp-001",
+                    "name": "Product Launch - AI Tool v2.0",
+                    "status": "running",
+                    "content_count": 12,
+                    "published_count": 8,
+                    "platforms": ["youtube", "instagram", "tiktok", "twitter"],
+                    "start_date": "2024-01-15",
+                    "end_date": "2024-02-15",
+                    "progress": 65
+                },
+                {
+                    "id": "camp-002",
+                    "name": "Educational Series - AI Basics",
+                    "status": "scheduled",
+                    "content_count": 8,
+                    "published_count": 0,
+                    "platforms": ["youtube", "linkedin", "twitter"],
+                    "start_date": "2024-02-01",
+                    "end_date": "2024-02-28",
+                    "progress": 0
+                }
+            ]
+        }
+    
+    @app.post("/api/campaigns")
+    async def create_campaign(campaign: dict):
+        """
+        Create a new campaign workflow.
+        
+        Accepts campaign configuration and sets up automated content generation pipeline.
+        """
+        campaign_id = str(uuid.uuid4())[:8]
+        
+        logger.info(
+            "Campaign created",
+            campaign_id=campaign_id,
+            name=campaign.get("name"),
+            platforms=campaign.get("platforms", [])
+        )
+        
+        return {
+            "status": "success",
+            "campaign_id": f"camp-{campaign_id}",
+            "message": f"Campaign '{campaign.get('name', 'Untitled')}' created successfully"
+        }
+    
+    @app.get("/api/campaigns/{campaign_id}")
+    async def get_campaign(campaign_id: str):
+        """Get details of a specific campaign."""
+        # Demo response
+        return {
+            "id": campaign_id,
+            "name": "Demo Campaign",
+            "status": "running",
+            "content_count": 10,
+            "published_count": 5,
+            "progress": 50,
+            "content_items": [
+                {"id": "content-1", "type": "video", "status": "published", "platform": "youtube"},
+                {"id": "content-2", "type": "image", "status": "published", "platform": "instagram"},
+                {"id": "content-3", "type": "video", "status": "scheduled", "platform": "tiktok"}
+            ]
+        }
+    
+    @app.patch("/api/campaigns/{campaign_id}")
+    async def update_campaign(campaign_id: str, updates: dict):
+        """Update campaign settings."""
+        logger.info("Campaign updated", campaign_id=campaign_id, updates=list(updates.keys()))
+        return {"status": "success", "campaign_id": campaign_id}
+    
+    @app.delete("/api/campaigns/{campaign_id}")
+    async def delete_campaign(campaign_id: str):
+        """Delete a campaign."""
+        logger.info("Campaign deleted", campaign_id=campaign_id)
+        return {"status": "success", "message": f"Campaign {campaign_id} deleted"}
+    
     return app
