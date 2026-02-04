@@ -1,19 +1,64 @@
 # Agentic Content Factory - Docker Compose
-# Full stack deployment with all services
+# Full stack deployment with polyglot architecture:
+#   - Go API Gateway (REST/WebSocket) - External interface
+#   - Python AI Services (gRPC) - AI workflow orchestration
+#   - Rust Client (Tauri) - Desktop application (separate build)
+#
+# Communication flow: Rust Client -> Go Gateway -> Python Services -> AI APIs
 
 services:
-  # Main API Server
-  api:
+  # ============================================
+  # Go API Gateway & Control Layer
+  # ============================================
+  # Handles REST/WebSocket API, authentication, rate limiting,
+  # and routes requests to Python services via gRPC
+  gateway:
+    image: golang:1.22-alpine
+    build:
+      context: ./go-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"           # REST API
+      - "8081:8081"           # WebSocket for real-time updates
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - PYTHON_ORCHESTRATOR_ADDR=orchestrator:50051
+      - PYTHON_VIDEO_SERVICE_ADDR=video-service:50052
+      - PYTHON_AUDIO_SERVICE_ADDR=audio-service:50053
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+    depends_on:
+      - redis
+      - orchestrator
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - gateway
+
+  # ============================================
+  # Python AI Services Layer
+  # ============================================
+  
+  # Content Orchestrator - Main workflow coordinator
+  orchestrator:
     build:
       context: .
       target: production
     ports:
-      - "8000:8000"
+      - "50051:50051"         # gRPC port
+      - "8000:8000"           # REST API (legacy/direct access)
     environment:
       - ENVIRONMENT=production
       - LOG_LEVEL=INFO
+      - GRPC_PORT=50051
       - REDIS_URL=redis://redis:6379/0
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/content_factory
+      - VIDEO_SERVICE_ADDR=video-service:50052
+      - AUDIO_SERVICE_ADDR=audio-service:50053
     env_file:
       - .env
     depends_on:
@@ -26,6 +71,50 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # Video Service - Handles FLUX.1, Sora, Veo integrations
+  video-service:
+    build:
+      context: .
+      target: production
+    command: ["python", "-m", "src.services.video_service", "--port", "50052"]
+    ports:
+      - "50052:50052"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - GRPC_PORT=50052
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    volumes:
+      - ./output:/app/output
+    profiles:
+      - services
+
+  # Audio Service - Handles MusicGen, ElevenLabs, Azure Speech
+  audio-service:
+    build:
+      context: .
+      target: production
+    command: ["python", "-m", "src.services.audio_service", "--port", "50053"]
+    ports:
+      - "50053:50053"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - GRPC_PORT=50053
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    volumes:
+      - ./output:/app/output
+    profiles:
+      - services
 
   # Background Worker (for content generation)
   worker:
