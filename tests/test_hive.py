@@ -7,7 +7,7 @@ from src.hive.models import (
     AgentResult, AgentRole,
     ImageVariation, HiveReward
 )
-from src.hive.agents import VisualistAgent, CriticAgent, AudioAgent, EditorAgent
+from src.hive.agents import VisualistAgent
 from src.hive.hive import ProductionHive
 from src.sentinel.models import CreativeBrief
 from src.utils.config import Config
