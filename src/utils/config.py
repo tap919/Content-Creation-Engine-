@@ -59,7 +59,7 @@ class Config(BaseModel):
     max_image_variations: int = Field(default=5)
     target_video_duration: int = Field(default=15)
     
-    class Config:
+    class model_config:
         env_file = ".env"
         env_file_encoding = "utf-8"
 
