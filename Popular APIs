@@ -1,0 +1,53 @@
+users need to be able to load various APIs from LLMs to social media sites, content sites, etc. give me a list
+
+Here are curated lists of popular, integrable APIs for LLMs, social media, and content sites, prioritized for JS/Python SDKs and dynamic loading in your modular engine.[1][2][3] These support key-based auth for user plugins, with open-source wrappers available.[4]
+
+## LLM APIs
+- **Mistral AI**: High-perf open-weight models (Mixtral); /chat/completions endpoint; JS/Python SDKs; ~$0.20-4/M tokens.[1]
+- **Grok (xAI)**: Reasoning/coding focus; API/chat; Python SDK; free tier limited.[5][6]
+- **OpenAI GPT-4o**: Versatile gen; /chat/completions; official Node/Python; $0.75/M mixed.[5]
+- **Anthropic Claude**: Coding/human-like; /messages; JS/Python; $3-15/M.[7]
+- **Google Gemini**: Multimodal; /generateContent; SDKs; competitive pricing.[7][6]
+- **Groq**: Fast inference open models; /chat/completions; free tier.[1]
+- **Ollama (local)**: Self-hosted open LLMs; /api/generate; Docker/JS wrapper.[8]
+
+## Social Media APIs
+- **Meta Graph API**: IG/FB posting/analytics (pro accounts); /media_publish; Python/JS SDKs; free OAuth.[2]
+- **X API v2**: Posting/tweets/search; /2/tweets; official JS/Python; paid tiers $100+/mo.[2][3]
+- **YouTube Data v3**: Upload/search/videos; /videos.insert; Node/Python SDKs; quota free.[2]
+- **LinkedIn API**: Posts/profiles; /ugcPosts; OAuth; JS SDK.[2]
+- **TikTok Business API**: Videos/analytics; /post/publish/video; partner approval.[9]
+
+## Content Site APIs
+- **Unsplash/Pexels**: Free stock images; /search/photos; JS/Python; unlimited attribution.[4]
+- **ImagineArt**: Text/image/video gen; /generate; business API; scalable pricing.[10]
+- **Creatomate**: Automated video templates; /renders; Node/Python/Zapier; per-minute.[11]
+- **Spotify Web API**: Music search/playlists; /search; official SDKs; OAuth free.[4]
+
+| Category | Top Picks | SDKs | Pricing Model |
+|----------|-----------|------|---------------|
+| LLMs | Mistral, Grok, Claude | JS/Python | Per-token |
+| Social | Meta Graph, X v2, YouTube | JS/Python | Free/paid quota |
+| Content | Pexels, ImagineArt | JS/Python | Free/usage
+
+Citations:
+[1] Ultimate Guide – The Best API Providers of Open Source LLM of 2026 https://www.siliconflow.com/articles/en/The-best-API-providers-of-Open-Source-LLM
+[2] Which Social Media APIs Should I Integrate Into My App? https://thisisglance.com/learning-centre/which-social-media-apis-should-i-integrate-into-my-app
+[3] Based on your description, it sounds like you're looking to build a custom content creation and management tool—essentially a unified dashboard that integrates multiple APIs for generating content (e.g., from AI services like OpenAI or Google Cloud) ...
+
+...atforms change APIs frequently (e.g., Twitter's recent shifts to paid tiers). Budget for premium access if needed (e.g., $100/month for Twitter API).
+   - **Costs**: Free tiers exist, but heavy use could rack up fees (e.g., OpenAI charges per token). https://www.perplexity.ai/search/181ce5e0-6e98-4afe-9fb8-8dea03f41c97
+[4] AlexGaiser/freepi: A libarary for free API wrappers and ... - GitHub https://github.com/AlexGaiser/freepi
+[5] The best large language models (LLMs) in 2026 - Zapier https://zapier.com/blog/best-llm/
+[6] Top LLMs To Use in 2026: Our Best Picks - Splunk https://www.splunk.com/en_us/blog/learn/llms-best-to-use.html
+[7] What are your top LLM picks in 2026 and why? : r/artificial - Reddit https://www.reddit.com/r/artificial/comments/1qo7psc/what_are_your_top_llm_picks_in_2026_and_why/
+[8] The Best Open-Source LLMs in 2026 - BentoML https://www.bentoml.com/blog/navigating-the-world-of-open-source-large-language-models
+[9] The Best Social Media API for 2025 - Influencers Club https://influencers.club/blog/social-media-api/
+[10] Image and Video Generation API for Businesses | ImagineArt https://www.imagine.art/gen-api
+[11] Creatomate: API for Automated Video Generation https://creatomate.com
+[12] Complete LLM Pricing Comparison 2026: We Analyzed 60+ Models ... https://www.cloudidr.com/blog/llm-pricing-comparison-2026
+[13] How to scrape data from Instagram, X, YouTube and Google in your ... https://www.nocodesaas.io/p/bubble-scraper-api-apify-instagram-x-youtube
+[14] 5 APIs for Developers to Integrate In-App Content Creation ... https://dev.to/joywinter90/5-apis-for-developers-to-integrate-in-app-content-creation-functionality-46gb
+[15] snixtho/hawf: HTTP API Wrapper Framework - GitHub https://github.com/snixtho/hawf
+[16] LLM Leaderboard 2026 - Complete AI Model Rankings https://llm-stats.com/leaderboards/llm-leaderboard
+
