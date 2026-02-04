@@ -712,11 +712,19 @@ function openCampaignWizard() {
     const today = new Date();
     const twoWeeksLater = new Date(today);
     twoWeeksLater.setDate(today.getDate() + 14);
+
+    // Helper to format a Date as YYYY-MM-DD in local time for date inputs
+    function formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
     
     const startInput = document.getElementById('campaign-start');
     const endInput = document.getElementById('campaign-end');
-    if (startInput) startInput.value = today.toISOString().split('T')[0];
-    if (endInput) endInput.value = twoWeeksLater.toISOString().split('T')[0];
+    if (startInput) startInput.value = formatDateForInput(today);
+    if (endInput) endInput.value = formatDateForInput(twoWeeksLater);
     
     openModal('campaign-wizard-modal');
 }
