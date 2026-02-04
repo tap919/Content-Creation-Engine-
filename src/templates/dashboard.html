@@ -431,10 +431,10 @@
                 <!-- Settings Page -->
                 <div id="page-settings" class="page-content hidden">
                     <div class="tabs">
-                        <button class="tab active" onclick="showSettingsTab('api')">API Keys</button>
-                        <button class="tab" onclick="showSettingsTab('connections')">Connections</button>
-                        <button class="tab" onclick="showSettingsTab('integrations')">Integrations</button>
-                        <button class="tab" onclick="showSettingsTab('preferences')">Preferences</button>
+                        <button class="tab active" onclick="showSettingsTab('api', event)">API Keys</button>
+                        <button class="tab" onclick="showSettingsTab('connections', event)">Connections</button>
+                        <button class="tab" onclick="showSettingsTab('integrations', event)">Integrations</button>
+                        <button class="tab" onclick="showSettingsTab('preferences', event)">Preferences</button>
                     </div>
                     
                     <div class="settings-grid">
@@ -756,10 +756,10 @@
     
     <script src="/static/js/dashboard.js"></script>
     <script>
-        function showSettingsTab(tab) {
+        function showSettingsTab(tab, e) {
             // Update active tab
             document.querySelectorAll('#page-settings .tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
+            e.target.classList.add('active');
         }
     </script>
 </body>

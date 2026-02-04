@@ -386,13 +386,13 @@ function populateSettingsForm(settings) {
         const elevenlabsInput = document.querySelector('#elevenlabs-key');
         const replicateInput = document.querySelector('#replicate-key');
         
-        if (openaiInput && settings.apiKeys.openai) {
+        if (openaiInput && settings.apiKeys?.openai && settings.apiKeys.openai.length >= 4) {
             openaiInput.value = '••••••••' + settings.apiKeys.openai.slice(-4);
         }
-        if (elevenlabsInput && settings.apiKeys.elevenlabs) {
+        if (elevenlabsInput && settings.apiKeys?.elevenlabs && settings.apiKeys.elevenlabs.length >= 4) {
             elevenlabsInput.value = '••••••••' + settings.apiKeys.elevenlabs.slice(-4);
         }
-        if (replicateInput && settings.apiKeys.replicate) {
+        if (replicateInput && settings.apiKeys?.replicate && settings.apiKeys.replicate.length >= 4) {
             replicateInput.value = '••••••••' + settings.apiKeys.replicate.slice(-4);
         }
     }
