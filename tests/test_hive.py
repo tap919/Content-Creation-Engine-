@@ -1,7 +1,6 @@
 """Tests for the Production Hive."""
 
 import pytest
-import numpy as np
 from pathlib import Path
 
 from src.hive.models import (
