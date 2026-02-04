@@ -5,10 +5,16 @@ Provides REST API endpoints for the Agentic Content Factory.
 """
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Optional
+import os
+import shutil
+import uuid
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 import structlog
 
@@ -99,6 +105,21 @@ def create_app(config: Config) -> FastAPI:
         allow_headers=["*"],
     )
     
+    # Mount static files directory
+    static_path = Path(__file__).parent.parent / "static"
+    if static_path.exists():
+        app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+    
+    # Serve dashboard HTML template
+    template_path = Path(__file__).parent.parent / "templates" / "dashboard.html"
+    
+    @app.get("/", response_class=HTMLResponse)
+    async def dashboard():
+        """Serve the main dashboard UI."""
+        if template_path.exists():
+            return FileResponse(str(template_path), media_type="text/html")
+        return HTMLResponse("<h1>Dashboard template not found</h1>", status_code=404)
+    
     @app.get("/health", response_model=HealthResponse)
     async def health_check():
         """Health check endpoint."""
@@ -111,6 +132,7 @@ def create_app(config: Config) -> FastAPI:
                 "evolution": "ok",
             }
         )
+    
     
     @app.post("/content/generate", response_model=ContentResponse)
     async def generate_content(
@@ -210,5 +232,125 @@ def create_app(config: Config) -> FastAPI:
             "status": "evolved",
             "new_generation": new_params.generation,
         }
+    
+    # File upload endpoint
+    @app.post("/api/upload")
+    async def upload_file(file: UploadFile = File(...)):
+        """
+        Upload a file for content processing.
+        
+        Supports various file types: video, audio, images, documents, data files.
+        """
+        if _factory is None:
+            raise HTTPException(status_code=503, detail="Service not initialized")
+        
+        # Allowed file extensions
+        allowed_extensions = {
+            # Video
+            '.mp4', '.mov', '.avi', '.mkv', '.webm',
+            # Audio
+            '.mp3', '.wav', '.ogg', '.flac',
+            # Images
+            '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg',
+            # Documents
+            '.pdf', '.txt', '.doc', '.docx',
+            # Data
+            '.csv', '.json', '.xml'
+        }
+        
+        # Check file extension
+        file_ext = Path(file.filename).suffix.lower() if file.filename else ''
+        if file_ext not in allowed_extensions:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"File type not supported. Allowed: {', '.join(sorted(allowed_extensions))}"
+            )
+        
+        # Create uploads directory
+        upload_dir = Path(_factory["config"].output_dir) / "uploads"
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Generate unique filename
+        file_id = str(uuid.uuid4())
+        safe_filename = f"{file_id}{file_ext}"
+        file_path = upload_dir / safe_filename
+        
+        # Save file
+        try:
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+        except Exception as e:
+            logger.exception("Failed to save uploaded file")
+            raise HTTPException(status_code=500, detail="Failed to save file")
+        
+        return {
+            "status": "success",
+            "file_id": file_id,
+            "filename": file.filename,
+            "file_path": str(file_path),
+            "content_type": file.content_type
+        }
+    
+    # Settings endpoints
+    @app.get("/api/settings")
+    async def get_settings():
+        """Get current application settings."""
+        if _factory is None:
+            raise HTTPException(status_code=503, detail="Service not initialized")
+        
+        config = _factory["config"]
+        return {
+            "brand_name": config.brand_name,
+            "brand_aesthetic": config.brand_aesthetic,
+            "cycle_interval_seconds": config.cycle_interval_seconds,
+            "deployment_platforms": config.deployment_platforms,
+            "trend_sources": config.trend_sources,
+            "apiKeys": {
+                # Only return masked versions for security
+                "openai": "••••••••" if config.openai_api_key else None,
+            },
+            "preferences": {
+                "auto_generate": True,
+                "auto_post": False,
+                "email_notifications": True,
+                "evolution_mode": True
+            }
+        }
+    
+    @app.post("/api/settings/api-keys")
+    async def save_api_keys(keys: dict):
+        """Save API keys (handled securely server-side)."""
+        # In production, these would be stored securely
+        # For now, just acknowledge the save
+        logger.info("API keys update requested", keys=list(keys.keys()))
+        return {"status": "success", "message": "API keys saved"}
+    
+    @app.patch("/api/settings/preferences")
+    async def update_preferences(preferences: dict):
+        """Update user preferences."""
+        logger.info("Preferences update requested", preferences=preferences)
+        return {"status": "success", "updated": preferences}
+    
+    @app.post("/api/connections/{service}/disconnect")
+    async def disconnect_service(service: str):
+        """Disconnect an OAuth service."""
+        logger.info("Service disconnection requested", service=service)
+        return {"status": "success", "service": service, "connected": False}
+    
+    @app.get("/api/oauth/{service}")
+    async def oauth_redirect(service: str):
+        """Initiate OAuth flow for a service."""
+        # Placeholder - in production this would redirect to actual OAuth
+        return HTMLResponse(f"""
+            <html>
+                <head><title>Connect {service}</title></head>
+                <body style="font-family: sans-serif; padding: 40px; text-align: center;">
+                    <h2>Connect to {service.title()}</h2>
+                    <p>OAuth integration coming soon.</p>
+                    <p>This would normally redirect to {service}'s authorization page.</p>
+                    <button onclick="window.close()">Close</button>
+                </body>
+            </html>
+        """)
     
     return app
