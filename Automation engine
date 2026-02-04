@@ -1,0 +1,404 @@
+{
+  "content_creation_engine": {
+    "version": "1.0",
+    "name": "AI Avatar Social Media Automation Engine",
+    
+    "ai_avatar_providers": {
+      "heygen": {
+        "enabled": true,
+        "api_config": {
+          "api_key": "${HEYGEN_API_KEY}",
+          "base_url": "https://api.heygen.com/v2",
+          "endpoints": {
+            "create_avatar": "/avatar/create",
+            "generate_video": "/video/generate",
+            "check_status": "/video/status"
+          }
+        },
+        "file_upload": {
+          "enabled": true,
+          "supported_formats": ["jpg", "png", "jpeg"],
+          "max_file_size_mb": 10,
+          "upload_endpoint": "/avatar/upload"
+        },
+        "features": {
+          "voice_cloning": true,
+          "custom_avatars": true,
+          "preset_avatars": true,
+          "languages": ["en", "es", "fr", "de", "zh", "ja"]
+        }
+      },
+      
+      "d-id": {
+        "enabled": true,
+        "api_config": {
+          "api_key": "${DID_API_KEY}",
+          "base_url": "https://api.d-id.com",
+          "endpoints": {
+            "create_talk": "/talks",
+            "get_talk": "/talks/{id}",
+            "list_voices": "/voices"
+          }
+        },
+        "file_upload": {
+          "enabled": true,
+          "supported_formats": ["jpg", "png"],
+          "max_file_size_mb": 8
+        },
+        "features": {
+          "talking_photos": true,
+          "voice_selection": true,
+          "script_to_video": true
+        }
+      },
+      
+      "synthesia": {
+        "enabled": true,
+        "api_config": {
+          "api_key": "${SYNTHESIA_API_KEY}",
+          "base_url": "https://api.synthesia.io/v2",
+          "endpoints": {
+            "create_video": "/videos",
+            "get_video": "/videos/{id}",
+            "list_avatars": "/avatars"
+          }
+        },
+        "file_upload": {
+          "enabled": false,
+          "note": "Synthesia primarily uses preset avatars"
+        },
+        "features": {
+          "preset_avatars": true,
+          "custom_avatars": true,
+          "multilingual": true,
+          "templates": true
+        }
+      },
+      
+      "elai": {
+        "enabled": true,
+        "api_config": {
+          "api_key": "${ELAI_API_KEY}",
+          "base_url": "https://api.elai.io/v1",
+          "endpoints": {
+            "render_video": "/render",
+            "upload_asset": "/upload"
+          }
+        },
+        "file_upload": {
+          "enabled": true,
+          "supported_formats": ["jpg", "png", "mp4", "mp3"],
+          "max_file_size_mb": 15
+        },
+        "features": {
+          "avatar_customization": true,
+          "voice_upload": true,
+          "scene_templates": true
+        }
+      }
+    },
+    
+    "content_workflow": {
+      "input_methods": {
+        "file_upload": {
+          "voice_file": {
+            "formats": ["mp3", "wav", "m4a"],
+            "max_size_mb": 50,
+            "processing": "auto_transcribe_and_clone"
+          },
+          "photo": {
+            "formats": ["jpg", "png", "jpeg"],
+            "max_size_mb": 10,
+            "processing": "face_detection_and_avatar_creation"
+          },
+          "script": {
+            "formats": ["txt", "docx", "pdf"],
+            "max_size_mb": 5,
+            "processing": "text_extraction"
+          }
+        },
+        
+        "direct_input": {
+          "text_script": {
+            "max_characters": 5000,
+            "auto_split": true
+          },
+          "voice_recording": {
+            "record_in_browser": true,
+            "max_duration_seconds": 300
+          }
+        },
+        
+        "api_input": {
+          "webhook_url": "${WEBHOOK_ENDPOINT}",
+          "accepted_payload": {
+            "script": "string",
+            "voice_url": "string (optional)",
+            "photo_url": "string (optional)",
+            "settings": "object (optional)"
+          }
+        }
+      },
+      
+      "processing_pipeline": [
+        {
+          "step": 1,
+          "name": "input_validation",
+          "actions": ["check_file_formats", "validate_content", "scan_for_violations"]
+        },
+        {
+          "step": 2,
+          "name": "avatar_creation",
+          "provider_selection": "auto",
+          "fallback_enabled": true,
+          "actions": ["select_provider", "upload_assets", "generate_avatar"]
+        },
+        {
+          "step": 3,
+          "name": "video_generation",
+          "actions": ["process_script", "sync_voice", "render_video"]
+        },
+        {
+          "step": 4,
+          "name": "post_processing",
+          "actions": ["add_captions", "apply_branding", "optimize_for_platforms"]
+        },
+        {
+          "step": 5,
+          "name": "social_media_distribution",
+          "actions": ["schedule_posts", "publish_content", "track_analytics"]
+        }
+      ]
+    },
+    
+    "social_media_platforms": {
+      "youtube": {
+        "enabled": true,
+        "api_config": {
+          "client_id": "${YOUTUBE_CLIENT_ID}",
+          "client_secret": "${YOUTUBE_CLIENT_SECRET}",
+          "redirect_uri": "${YOUTUBE_REDIRECT_URI}"
+        },
+        "posting_config": {
+          "video_specs": {
+            "max_file_size_mb": 256000,
+            "recommended_resolution": "1920x1080",
+            "formats": ["mp4", "mov", "avi"]
+          },
+          "auto_settings": {
+            "title_template": "${script_first_line}",
+            "description_template": "${script_full}\n\n#AI #Avatar",
+            "privacy": "public",
+            "category": "22",
+            "tags": ["AI", "Avatar", "Content"]
+          }
+        }
+      },
+      
+      "instagram": {
+        "enabled": true,
+        "api_config": {
+          "access_token": "${INSTAGRAM_ACCESS_TOKEN}",
+          "account_id": "${INSTAGRAM_ACCOUNT_ID}"
+        },
+        "posting_config": {
+          "feed_post": {
+            "max_duration_seconds": 60,
+            "aspect_ratios": ["1:1", "4:5", "16:9"],
+            "max_file_size_mb": 100
+          },
+          "reels": {
+            "max_duration_seconds": 90,
+            "aspect_ratio": "9:16",
+            "max_file_size_mb": 100
+          },
+          "auto_settings": {
+            "caption_template": "${script_summary}\n\n#AIAvatar #ContentCreator",
+            "post_type": "reels"
+          }
+        }
+      },
+      
+      "tiktok": {
+        "enabled": true,
+        "api_config": {
+          "client_key": "${TIKTOK_CLIENT_KEY}",
+          "client_secret": "${TIKTOK_CLIENT_SECRET}",
+          "access_token": "${TIKTOK_ACCESS_TOKEN}"
+        },
+        "posting_config": {
+          "video_specs": {
+            "max_duration_seconds": 180,
+            "aspect_ratio": "9:16",
+            "max_file_size_mb": 287,
+            "formats": ["mp4", "mov"]
+          },
+          "auto_settings": {
+            "caption_template": "${script_summary} #AIContent #Avatar",
+            "privacy_level": "PUBLIC_TO_EVERYONE",
+            "allow_comments": true,
+            "allow_duet": true
+          }
+        }
+      },
+      
+      "twitter_x": {
+        "enabled": true,
+        "api_config": {
+          "api_key": "${TWITTER_API_KEY}",
+          "api_secret": "${TWITTER_API_SECRET}",
+          "access_token": "${TWITTER_ACCESS_TOKEN}",
+          "access_token_secret": "${TWITTER_ACCESS_TOKEN_SECRET}"
+        },
+        "posting_config": {
+          "video_specs": {
+            "max_duration_seconds": 140,
+            "max_file_size_mb": 512,
+            "formats": ["mp4"]
+          },
+          "auto_settings": {
+            "tweet_template": "${script_summary}\n\n#AI #Avatar",
+            "max_characters": 280
+          }
+        }
+      },
+      
+      "facebook": {
+        "enabled": true,
+        "api_config": {
+          "access_token": "${FACEBOOK_ACCESS_TOKEN}",
+          "page_id": "${FACEBOOK_PAGE_ID}"
+        },
+        "posting_config": {
+          "video_specs": {
+            "max_file_size_mb": 10000,
+            "formats": ["mp4", "mov"]
+          },
+          "auto_settings": {
+            "description_template": "${script_full}",
+            "published": true
+          }
+        }
+      },
+      
+      "linkedin": {
+        "enabled": true,
+        "api_config": {
+          "access_token": "${LINKEDIN_ACCESS_TOKEN}",
+          "organization_id": "${LINKEDIN_ORG_ID}"
+        },
+        "posting_config": {
+          "video_specs": {
+            "max_duration_seconds": 600,
+            "max_file_size_mb": 5000,
+            "formats": ["mp4"]
+          },
+          "auto_settings": {
+            "commentary_template": "${script_summary}\n\n#AI #ProfessionalContent",
+            "visibility": "PUBLIC"
+          }
+        }
+      }
+    },
+    
+    "automation_settings": {
+      "scheduling": {
+        "enabled": true,
+        "timezone": "UTC",
+        "queue_system": {
+          "max_queue_size": 100,
+          "processing_mode": "sequential",
+          "retry_failed": true,
+          "max_retries": 3
+        },
+        "posting_schedule": {
+          "immediate": false,
+          "optimal_time_detection": true,
+          "custom_schedule": {
+            "monday": ["09:00", "15:00", "20:00"],
+            "tuesday": ["09:00", "15:00", "20:00"],
+            "wednesday": ["09:00", "15:00", "20:00"],
+            "thursday": ["09:00", "15:00", "20:00"],
+            "friday": ["09:00", "15:00", "20:00"],
+            "saturday": ["11:00", "17:00"],
+            "sunday": ["11:00", "17:00"]
+          }
+        }
+      },
+      
+      "content_customization": {
+        "per_platform_variations": true,
+        "auto_resize_videos": true,
+        "auto_generate_captions": true,
+        "auto_generate_hashtags": true,
+        "branding": {
+          "add_watermark": false,
+          "watermark_position": "bottom-right",
+          "add_intro": false,
+          "add_outro": false
+        }
+      },
+      
+      "quality_control": {
+        "manual_approval": false,
+        "content_moderation": true,
+        "brand_safety_check": true,
+        "duplicate_detection": true
+      }
+    },
+    
+    "analytics_tracking": {
+      "enabled": true,
+      "metrics": [
+        "views",
+        "likes",
+        "comments",
+        "shares",
+        "engagement_rate",
+        "watch_time",
+        "click_through_rate"
+      ],
+      "reporting": {
+        "frequency": "daily",
+        "export_format": ["json", "csv"],
+        "dashboard_url": "${ANALYTICS_DASHBOARD_URL}"
+      }
+    },
+    
+    "error_handling": {
+      "logging": {
+        "level": "info",
+        "destination": "file",
+        "log_file_path": "/logs/content_engine.log"
+      },
+      "notifications": {
+        "email": "${ADMIN_EMAIL}",
+        "webhook": "${ERROR_WEBHOOK_URL}",
+        "on_failure": true,
+        "on_success": false
+      },
+      "fallback_providers": {
+        "enabled": true,
+        "order": ["heygen", "d-id", "elai", "synthesia"]
+      }
+    },
+    
+    "user_settings": {
+      "customization_options": {
+        "avatar_style": ["realistic", "cartoon", "3d", "anime"],
+        "voice_gender": ["male", "female", "neutral"],
+        "voice_age": ["young", "middle", "senior"],
+        "language": "en",
+        "background": ["solid", "gradient", "custom_upload"],
+        "actions": ["talking", "gesturing", "presenting", "walking"]
+      },
+      
+      "default_preferences": {
+        "preferred_provider": "heygen",
+        "preferred_platforms": ["instagram", "tiktok", "youtube"],
+        "auto_post": false,
+        "require_approval": true
+      }
+    }
+  }
+}
