@@ -4,8 +4,8 @@ import pytest
 from pathlib import Path
 
 from src.hive.models import (
-    GeneratedContent, AgentResult, AgentRole,
-    ImageVariation, AudioTrack, HiveReward
+    AgentResult, AgentRole,
+    ImageVariation, HiveReward
 )
 from src.hive.agents import VisualistAgent, CriticAgent, AudioAgent, EditorAgent
 from src.hive.hive import ProductionHive
