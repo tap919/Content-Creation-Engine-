@@ -339,17 +339,11 @@ def create_app(config: Config) -> FastAPI:
     @app.get("/api/oauth/{service}")
     async def oauth_redirect(service: str):
         """Initiate OAuth flow for a service."""
-        # Placeholder - in production this would redirect to actual OAuth
-        return HTMLResponse(f"""
-            <html>
-                <head><title>Connect {service}</title></head>
-                <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                    <h2>Connect to {service.title()}</h2>
-                    <p>OAuth integration coming soon.</p>
-                    <p>This would normally redirect to {service}'s authorization page.</p>
-                    <button onclick="window.close()">Close</button>
-                </body>
-            </html>
-        """)
+        # Explicitly indicate that OAuth is not yet implemented for this service
+        raise HTTPException(
+            status_code=501,
+            detail=f"OAuth integration for '{service}' is not yet implemented. "
+                   "Please try again in a future version.",
+        )
     
     return app
