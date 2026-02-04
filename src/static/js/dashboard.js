@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     loadInitialData();
     initializeToggles();
+    initializePlatformSelector();
 });
 
 // Navigation
@@ -83,7 +84,13 @@ function navigateTo(page) {
         'create': 'Create Content',
         'analytics': 'Analytics',
         'trends': 'Trend Analysis',
-        'settings': 'Settings'
+        'settings': 'Settings',
+        'campaigns': 'Campaign Workflows',
+        'video': 'Video Studio',
+        'audio': 'Audio Studio',
+        'images': 'Image Generator',
+        'automation': 'Automation',
+        'evolution': 'Evolution Loop'
     };
     
     const titleElement = document.querySelector('.page-title');
@@ -100,6 +107,8 @@ function navigateTo(page) {
         loadContentList();
     } else if (page === 'settings') {
         loadSettingsData();
+    } else if (page === 'campaigns') {
+        loadCampaignsList();
     }
 }
 
@@ -655,6 +664,344 @@ function showSettingsTab(tab, e) {
     // This function updates only the active tab styling for visual feedback
 }
 
+// Campaign Wizard State
+const CampaignWizard = {
+    currentStep: 1,
+    totalSteps: 4,
+    data: {
+        name: '',
+        goal: '',
+        audience: '',
+        platforms: [],
+        contentCount: 10,
+        contentTypes: [],
+        tone: 'professional',
+        startDate: '',
+        endDate: '',
+        frequency: 'every-other-day',
+        autoPublish: false
+    }
+};
+
+// Show global help modal
+function showGlobalHelp() {
+    openModal('global-help-modal');
+}
+
+// Open Campaign Wizard
+function openCampaignWizard() {
+    // Reset wizard state
+    CampaignWizard.currentStep = 1;
+    CampaignWizard.data = {
+        name: '',
+        goal: '',
+        audience: '',
+        platforms: [],
+        contentCount: 10,
+        contentTypes: [],
+        tone: 'professional',
+        startDate: '',
+        endDate: '',
+        frequency: 'every-other-day',
+        autoPublish: false
+    };
+    
+    // Reset wizard UI
+    updateWizardUI();
+    
+    // Set default dates (start: today, end: 2 weeks from now)
+    const today = new Date();
+    const twoWeeksLater = new Date(today);
+    twoWeeksLater.setDate(today.getDate() + 14);
+
+    // Helper to format a Date as YYYY-MM-DD in local time for date inputs
+    function formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    const startInput = document.getElementById('campaign-start');
+    const endInput = document.getElementById('campaign-end');
+    if (startInput) startInput.value = formatDateForInput(today);
+    if (endInput) endInput.value = formatDateForInput(twoWeeksLater);
+    
+    openModal('campaign-wizard-modal');
+}
+
+// Next wizard step
+function nextWizardStep() {
+    // Save current step data
+    saveWizardStepData();
+    
+    if (CampaignWizard.currentStep < CampaignWizard.totalSteps) {
+        CampaignWizard.currentStep++;
+        updateWizardUI();
+    } else {
+        // Submit campaign
+        createCampaign();
+    }
+}
+
+// Previous wizard step
+function prevWizardStep() {
+    if (CampaignWizard.currentStep > 1) {
+        CampaignWizard.currentStep--;
+        updateWizardUI();
+    }
+}
+
+// Save current step data
+function saveWizardStepData() {
+    switch (CampaignWizard.currentStep) {
+        case 1:
+            CampaignWizard.data.name = document.getElementById('campaign-name')?.value || '';
+            CampaignWizard.data.goal = document.getElementById('campaign-goal')?.value || '';
+            CampaignWizard.data.audience = document.getElementById('campaign-audience')?.value || '';
+            break;
+        case 2:
+            CampaignWizard.data.platforms = [];
+            document.querySelectorAll('input[name="platform"]:checked').forEach(input => {
+                CampaignWizard.data.platforms.push(input.value);
+            });
+            break;
+        case 3:
+            CampaignWizard.data.contentCount = document.getElementById('campaign-content-count')?.value || '10';
+            CampaignWizard.data.tone = document.getElementById('campaign-tone')?.value || 'professional';
+            break;
+        case 4:
+            CampaignWizard.data.startDate = document.getElementById('campaign-start')?.value || '';
+            CampaignWizard.data.endDate = document.getElementById('campaign-end')?.value || '';
+            CampaignWizard.data.frequency = document.getElementById('campaign-frequency')?.value || 'every-other-day';
+            CampaignWizard.data.autoPublish = document.getElementById('campaign-auto-publish')?.checked || false;
+            break;
+    }
+}
+
+// Update wizard UI based on current step
+function updateWizardUI() {
+    // Update step indicators
+    for (let i = 1; i <= CampaignWizard.totalSteps; i++) {
+        const stepEl = document.getElementById(`wizard-step-${i}`);
+        const contentEl = document.getElementById(`wizard-content-${i}`);
+        
+        if (stepEl) {
+            stepEl.classList.remove('active', 'completed');
+            if (i < CampaignWizard.currentStep) {
+                stepEl.classList.add('completed');
+            } else if (i === CampaignWizard.currentStep) {
+                stepEl.classList.add('active');
+            }
+        }
+        
+        if (contentEl) {
+            if (i === CampaignWizard.currentStep) {
+                contentEl.classList.remove('hidden');
+            } else {
+                contentEl.classList.add('hidden');
+            }
+        }
+    }
+    
+    // Update buttons
+    const prevBtn = document.getElementById('wizard-prev-btn');
+    const nextBtn = document.getElementById('wizard-next-btn');
+    
+    if (prevBtn) {
+        prevBtn.style.display = CampaignWizard.currentStep > 1 ? 'block' : 'none';
+    }
+    
+    if (nextBtn) {
+        if (CampaignWizard.currentStep === CampaignWizard.totalSteps) {
+            nextBtn.textContent = '🚀 Create Campaign';
+        } else {
+            nextBtn.textContent = 'Next →';
+        }
+    }
+
+    // Restore form field values from saved wizard data when navigating between steps
+    if (typeof CampaignWizard !== 'undefined' && CampaignWizard.data) {
+        switch (CampaignWizard.currentStep) {
+            case 1:
+                // Restore campaign basic information (e.g., name)
+                {
+                    const nameInput = document.getElementById('campaign-name-input');
+                    if (nameInput && typeof CampaignWizard.data.name !== 'undefined') {
+                        nameInput.value = CampaignWizard.data.name;
+                    }
+                }
+                break;
+            case 2:
+                // Restore platform selections from CampaignWizard.data.platforms
+                {
+                    if (Array.isArray(CampaignWizard.data.platforms)) {
+                        const platformInputs = document.querySelectorAll('input[name="campaign-platform"]');
+                        platformInputs.forEach(function (input) {
+                            if (input && typeof input.value !== 'undefined') {
+                                input.checked = CampaignWizard.data.platforms.indexOf(input.value) !== -1;
+                            }
+                        });
+                    }
+                }
+                break;
+            default:
+                // Additional steps can restore their fields here as needed
+                break;
+        }
+    }
+}
+
+// Create campaign from wizard data
+async function createCampaign() {
+    saveWizardStepData();
+    
+    // Validate required fields
+    if (!CampaignWizard.data.name) {
+        showToast('error', 'Missing Information', 'Please enter a campaign name');
+        CampaignWizard.currentStep = 1;
+        updateWizardUI();
+        return;
+    }
+    
+    if (CampaignWizard.data.platforms.length === 0) {
+        showToast('error', 'Missing Information', 'Please select at least one platform');
+        CampaignWizard.currentStep = 2;
+        updateWizardUI();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/campaigns`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(CampaignWizard.data)
+        });
+        
+        if (response.ok) {
+            await response.json();
+            showToast('success', 'Campaign Created', `"${CampaignWizard.data.name}" is ready to go!`);
+            closeModal('campaign-wizard-modal');
+            
+            // Refresh campaigns list
+            if (DashboardState.currentPage === 'campaigns') {
+                loadCampaignsList();
+            }
+        } else {
+            // Handle HTTP error responses by showing an error toast
+            let errorMessage = 'Failed to create campaign. Please try again.';
+            try {
+                const errorData = await response.json();
+                if (errorData && (errorData.message || errorData.error)) {
+                    errorMessage = errorData.message || errorData.error;
+                }
+            } catch (parseError) {
+                // Ignore JSON parsing errors and fall back to generic message
+            }
+            showToast('error', 'Campaign Error', errorMessage);
+        }
+    } catch (error) {
+        // Distinguish network/API-unavailable errors from other exceptions
+        const errorMessage = (error && error.message) ? error.message : String(error);
+        const lowerMessage = errorMessage.toLowerCase();
+        const isNetworkError =
+            lowerMessage.includes('failed to fetch') ||
+            lowerMessage.includes('network') ||
+            lowerMessage.includes('connection');
+
+        if (isNetworkError) {
+            // For demo purposes, simulate a successful campaign creation when API is unavailable
+            showToast('success', 'Campaign Created (Simulated)', `"${CampaignWizard.data.name}" has been created (API unavailable, simulated in demo).`);
+            closeModal('campaign-wizard-modal');
+        } else {
+            console.error('Error creating campaign:', error);
+            showToast('error', 'Campaign Error', 'An unexpected error occurred while creating the campaign. Please try again.');
+        }
+    }
+}
+
+// Create campaign from template
+function createCampaignFromTemplate(templateType) {
+    // Pre-fill wizard data based on template
+    const templates = {
+        'launch': {
+            name: 'Product Launch Campaign',
+            goal: 'Generate buzz and awareness for new product launch',
+            contentCount: '10',
+            tone: 'professional',
+            frequency: 'daily'
+        },
+        'evergreen': {
+            name: 'Evergreen Content Series',
+            goal: 'Build consistent brand presence with always-relevant content',
+            contentCount: '20',
+            tone: 'educational',
+            frequency: 'twice-weekly'
+        },
+        'event': {
+            name: 'Event Promotion Campaign',
+            goal: 'Drive registrations and engagement before, during, and after event',
+            contentCount: '15',
+            tone: 'inspirational',
+            frequency: 'daily'
+        }
+    };
+    
+    const template = templates[templateType];
+    if (template) {
+        // Open the campaign wizard before accessing its form fields
+        openCampaignWizard();
+
+        // Pre-fill form fields after wizard is opened
+        const nameInput = document.getElementById('campaign-name');
+        const goalInput = document.getElementById('campaign-goal');
+        const contentCountInput = document.getElementById('campaign-content-count');
+        const toneInput = document.getElementById('campaign-tone');
+        const frequencyInput = document.getElementById('campaign-frequency');
+
+        if (nameInput) nameInput.value = template.name;
+        if (goalInput) goalInput.value = template.goal;
+        if (contentCountInput) contentCountInput.value = template.contentCount;
+        if (toneInput) toneInput.value = template.tone;
+        if (frequencyInput) frequencyInput.value = template.frequency;
+        
+        showToast('info', 'Template Applied', `Using "${templateType}" template`);
+    }
+}
+
+// Load campaigns list
+async function loadCampaignsList() {
+    try {
+        const response = await fetch(`${API_BASE}/api/campaigns`);
+        if (response.ok) {
+            await response.json();
+            // Update campaigns list UI
+            // For now, the static demo data is shown
+        }
+    } catch (error) {
+        // API might not exist yet, use demo data
+        console.log('Using demo campaign data');
+    }
+}
+
+// Initialize platform selector interactions
+function initializePlatformSelector() {
+    document.querySelectorAll('.platform-option').forEach(option => {
+        // Sync selected class with checkbox state on page load and checkbox change
+        const checkbox = option.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+            // Ensure initial visual state matches the checkbox checked state
+            option.classList.toggle('selected', checkbox.checked);
+            
+            checkbox.addEventListener('change', () => {
+                option.classList.toggle('selected', checkbox.checked);
+            });
+        }
+    });
+}
+
 // Export for global access
 window.Dashboard = {
     navigateTo,
@@ -663,5 +1010,10 @@ window.Dashboard = {
     openModal,
     closeModal,
     showToast,
-    showSettingsTab
+    showSettingsTab,
+    showGlobalHelp,
+    openCampaignWizard,
+    nextWizardStep,
+    prevWizardStep,
+    createCampaignFromTemplate
 };

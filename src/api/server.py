@@ -78,6 +78,36 @@ class PreferencesRequest(BaseModel):
     cycle_interval: Optional[int] = Field(default=None, ge=1800, le=86400)
 
 
+class CampaignCreateRequest(BaseModel):
+    """Request model for creating a campaign."""
+    name: str = Field(..., min_length=1, max_length=200, description="Campaign name")
+    goal: Optional[str] = Field(default=None, max_length=1000, description="Campaign goal")
+    audience: Optional[str] = Field(default=None, max_length=500, description="Target audience")
+    platforms: List[str] = Field(default_factory=list, description="Target platforms")
+    contentCount: Optional[int] = Field(default=10, ge=1, le=100, description="Number of content pieces")
+    contentTypes: Optional[List[str]] = Field(default_factory=list, description="Types of content to create")
+    tone: Optional[str] = Field(default="professional", description="Content tone")
+    startDate: Optional[str] = Field(default=None, description="Campaign start date")
+    endDate: Optional[str] = Field(default=None, description="Campaign end date")
+    frequency: Optional[str] = Field(default="every-other-day", description="Publishing frequency")
+    autoPublish: Optional[bool] = Field(default=False, description="Auto-publish content")
+
+
+class CampaignUpdateRequest(BaseModel):
+    """Request model for updating a campaign."""
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200, description="Campaign name")
+    goal: Optional[str] = Field(default=None, max_length=1000, description="Campaign goal")
+    audience: Optional[str] = Field(default=None, max_length=500, description="Target audience")
+    platforms: Optional[List[str]] = Field(default=None, description="Target platforms")
+    contentCount: Optional[int] = Field(default=None, ge=1, le=100, description="Number of content pieces")
+    tone: Optional[str] = Field(default=None, description="Content tone")
+    startDate: Optional[str] = Field(default=None, description="Campaign start date")
+    endDate: Optional[str] = Field(default=None, description="Campaign end date")
+    frequency: Optional[str] = Field(default=None, description="Publishing frequency")
+    autoPublish: Optional[bool] = Field(default=None, description="Auto-publish content")
+    status: Optional[str] = Field(default=None, description="Campaign status")
+
+
 # Dependency to get factory instance
 async def get_factory():
     """Dependency that provides the factory instance."""
@@ -396,5 +426,93 @@ def create_app(config: Config) -> FastAPI:
             detail=f"OAuth integration for '{service}' is not yet implemented. "
                    "Please try again in a future version.",
         )
+    
+    # Campaign workflow endpoints
+    @app.get("/api/campaigns")
+    async def list_campaigns():
+        """
+        List all campaigns.
+        
+        Returns demo campaign data. In production, this would fetch from a database.
+        """
+        return {
+            "campaigns": [
+                {
+                    "id": "camp-001",
+                    "name": "Product Launch - AI Tool v2.0",
+                    "status": "running",
+                    "content_count": 12,
+                    "published_count": 8,
+                    "platforms": ["youtube", "instagram", "tiktok", "twitter"],
+                    "start_date": "2024-01-15",
+                    "end_date": "2024-02-15",
+                    "progress": 65
+                },
+                {
+                    "id": "camp-002",
+                    "name": "Educational Series - AI Basics",
+                    "status": "scheduled",
+                    "content_count": 8,
+                    "published_count": 0,
+                    "platforms": ["youtube", "linkedin", "twitter"],
+                    "start_date": "2024-02-01",
+                    "end_date": "2024-02-28",
+                    "progress": 0
+                }
+            ]
+        }
+    
+    @app.post("/api/campaigns")
+    async def create_campaign(campaign: CampaignCreateRequest):
+        """
+        Create a new campaign workflow.
+        
+        Accepts campaign configuration and sets up automated content generation pipeline.
+        """
+        campaign_id = str(uuid.uuid4())[:8]
+        
+        logger.info(
+            "Campaign created",
+            campaign_id=campaign_id,
+            name=campaign.name,
+            platforms=campaign.platforms
+        )
+        
+        return {
+            "status": "success",
+            "campaign_id": f"camp-{campaign_id}",
+            "message": f"Campaign '{campaign.name}' created successfully"
+        }
+    
+    @app.get("/api/campaigns/{campaign_id}")
+    async def get_campaign(campaign_id: str):
+        """Get details of a specific campaign."""
+        # Demo response
+        return {
+            "id": campaign_id,
+            "name": "Demo Campaign",
+            "status": "running",
+            "content_count": 10,
+            "published_count": 5,
+            "progress": 50,
+            "content_items": [
+                {"id": "content-1", "type": "video", "status": "published", "platform": "youtube"},
+                {"id": "content-2", "type": "image", "status": "published", "platform": "instagram"},
+                {"id": "content-3", "type": "video", "status": "scheduled", "platform": "tiktok"}
+            ]
+        }
+    
+    @app.patch("/api/campaigns/{campaign_id}")
+    async def update_campaign(campaign_id: str, updates: CampaignUpdateRequest):
+        """Update campaign settings."""
+        updated_fields = {k: v for k, v in updates.model_dump().items() if v is not None}
+        logger.info("Campaign updated", campaign_id=campaign_id, updates=list(updated_fields.keys()))
+        return {"status": "success", "campaign_id": campaign_id, "updated": updated_fields}
+    
+    @app.delete("/api/campaigns/{campaign_id}")
+    async def delete_campaign(campaign_id: str):
+        """Delete a campaign."""
+        logger.info("Campaign deleted", campaign_id=campaign_id)
+        return {"status": "success", "message": f"Campaign {campaign_id} deleted"}
     
     return app

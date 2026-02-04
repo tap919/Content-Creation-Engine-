@@ -46,6 +46,11 @@
                     <span class="nav-icon">📉</span>
                     <span class="nav-label">Analytics</span>
                 </a>
+                <a class="nav-item" data-page="campaigns">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-label">Campaigns</span>
+                    <span class="nav-badge">New</span>
+                </a>
                 
                 <div class="nav-title">Production</div>
                 <a class="nav-item" data-page="video">
@@ -105,7 +110,7 @@
                         🔔
                         <span class="notification-dot"></span>
                     </button>
-                    <button class="header-btn" title="Help">❓</button>
+                    <button class="header-btn" title="Help" id="global-help-btn" onclick="Dashboard.showGlobalHelp()">❓</button>
                 </div>
             </header>
             
@@ -120,7 +125,15 @@
                                 <div class="stat-icon yellow">📹</div>
                                 <div>
                                     <div class="stat-value" id="content-count">12</div>
-                                    <div class="stat-label">Contents Created</div>
+                                    <div class="stat-label">Contents Created
+                                        <span class="help-bubble" tabindex="0" aria-label="Help for Contents Created">
+                                            <span class="help-bubble-icon">?</span>
+                                            <div class="help-bubble-content">
+                                                <div class="help-bubble-title">Contents Created</div>
+                                                <div class="help-bubble-text">Total number of AI-generated content pieces created by your account, including videos, images, and text posts.</div>
+                                            </div>
+                                        </span>
+                                    </div>
                                     <div class="stat-change">+23% this week</div>
                                 </div>
                             </div>
@@ -130,7 +143,15 @@
                                 <div class="stat-icon blue">👁️</div>
                                 <div>
                                     <div class="stat-value" id="view-count">45.2K</div>
-                                    <div class="stat-label">Total Views</div>
+                                    <div class="stat-label">Total Views
+                                        <span class="help-bubble" tabindex="0" aria-label="Help for Total Views">
+                                            <span class="help-bubble-icon">?</span>
+                                            <div class="help-bubble-content">
+                                                <div class="help-bubble-title">Total Views</div>
+                                                <div class="help-bubble-text">Combined view count across all platforms where your content has been published.</div>
+                                            </div>
+                                        </span>
+                                    </div>
                                     <div class="stat-change">+15% this week</div>
                                 </div>
                             </div>
@@ -140,7 +161,15 @@
                                 <div class="stat-icon green">💬</div>
                                 <div>
                                     <div class="stat-value" id="engagement-rate">8.4%</div>
-                                    <div class="stat-label">Engagement Rate</div>
+                                    <div class="stat-label">Engagement Rate
+                                        <span class="help-bubble" tabindex="0" aria-label="Help for Engagement Rate">
+                                            <span class="help-bubble-icon">?</span>
+                                            <div class="help-bubble-content">
+                                                <div class="help-bubble-title">Engagement Rate</div>
+                                                <div class="help-bubble-text">Percentage of viewers who interact with your content through likes, comments, and shares. Higher rates indicate more engaging content.</div>
+                                            </div>
+                                        </span>
+                                    </div>
                                     <div class="stat-change">+2.1% this week</div>
                                 </div>
                             </div>
@@ -150,7 +179,15 @@
                                 <div class="stat-icon orange">🧬</div>
                                 <div>
                                     <div class="stat-value" id="generation-count">7</div>
-                                    <div class="stat-label">Evolution Cycles</div>
+                                    <div class="stat-label">Evolution Cycles
+                                        <span class="help-bubble" tabindex="0" aria-label="Help for Evolution Cycles">
+                                            <span class="help-bubble-icon">?</span>
+                                            <div class="help-bubble-content">
+                                                <div class="help-bubble-title">Evolution Cycles</div>
+                                                <div class="help-bubble-text">Number of optimization cycles completed. Each cycle uses evolutionary algorithms to improve content parameters based on engagement data.</div>
+                                            </div>
+                                        </span>
+                                    </div>
                                     <div class="stat-change">Optimizing...</div>
                                 </div>
                             </div>
@@ -162,7 +199,15 @@
                         <div class="glass-card">
                             <div class="card-header">
                                 <div>
-                                    <h3 class="card-title">Quick Actions</h3>
+                                    <h3 class="card-title">Quick Actions
+                                        <span class="help-bubble" tabindex="0" aria-label="Help for Quick Actions">
+                                            <span class="help-bubble-icon">?</span>
+                                            <div class="help-bubble-content position-bottom">
+                                                <div class="help-bubble-title">Quick Actions</div>
+                                                <div class="help-bubble-text">Shortcuts to common tasks. Use "Generate Content" for AI-powered creation, "Create Custom" for manual uploads, or "Run Evolution" to optimize parameters.</div>
+                                            </div>
+                                        </span>
+                                    </h3>
                                     <p class="card-subtitle">Start creating content instantly</p>
                                 </div>
                             </div>
@@ -172,6 +217,9 @@
                                 </button>
                                 <button class="btn btn-secondary" onclick="Dashboard.navigateTo('create')">
                                     ✨ Create Custom Content
+                                </button>
+                                <button class="btn btn-secondary" onclick="Dashboard.navigateTo('campaigns')">
+                                    🎯 Create Campaign
                                 </button>
                                 <button class="btn btn-secondary" onclick="Dashboard.triggerEvolution()">
                                     🧬 Run Evolution Cycle
@@ -750,8 +798,457 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Campaigns Page - Workflow Automation Pipeline -->
+                <div id="page-campaigns" class="page-content hidden">
+                    <div class="section-header">
+                        <h2 class="section-title">Campaign Workflows
+                            <span class="help-bubble" tabindex="0" aria-label="Help for Campaign Workflows">
+                                <span class="help-bubble-icon">?</span>
+                                <div class="help-bubble-content position-bottom">
+                                    <div class="help-bubble-title">Campaign Workflows</div>
+                                    <div class="help-bubble-text">Create automated content campaigns that generate, schedule, and publish multiple pieces of content across platforms. Perfect for product launches, events, or ongoing content strategies.</div>
+                                </div>
+                            </span>
+                        </h2>
+                        <button class="btn btn-primary" onclick="Dashboard.openCampaignWizard()">
+                            + New Campaign
+                        </button>
+                    </div>
+                    
+                    <!-- Campaign Pipeline Visualization -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Campaign Pipeline
+                                <span class="help-bubble" tabindex="0" aria-label="Help for Campaign Pipeline">
+                                    <span class="help-bubble-icon">?</span>
+                                    <div class="help-bubble-content position-bottom">
+                                        <div class="help-bubble-title">Campaign Pipeline</div>
+                                        <div class="help-bubble-text">Each campaign flows through these stages: Define your goals, generate content variants, schedule publishing, and track performance for optimization.</div>
+                                    </div>
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="workflow-pipeline">
+                            <div class="workflow-step completed">
+                                <div class="workflow-step-icon">🎯</div>
+                                <div class="workflow-step-number"></div>
+                                <div class="workflow-step-label">Define Goals</div>
+                                <div class="workflow-connector"></div>
+                            </div>
+                            <div class="workflow-step completed">
+                                <div class="workflow-step-icon">🎨</div>
+                                <div class="workflow-step-number"></div>
+                                <div class="workflow-step-label">Create Content</div>
+                                <div class="workflow-connector"></div>
+                            </div>
+                            <div class="workflow-step active">
+                                <div class="workflow-step-icon">📅</div>
+                                <div class="workflow-step-number">3</div>
+                                <div class="workflow-step-label">Schedule</div>
+                                <div class="workflow-connector"></div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-step-icon">🚀</div>
+                                <div class="workflow-step-number">4</div>
+                                <div class="workflow-step-label">Publish</div>
+                                <div class="workflow-connector"></div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-step-icon">📊</div>
+                                <div class="workflow-step-number">5</div>
+                                <div class="workflow-step-label">Analyze</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Campaigns -->
+                    <div class="glass-card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Active Campaigns</h3>
+                        </div>
+                        <div id="campaigns-list">
+                            <div class="campaign-card">
+                                <div class="campaign-header">
+                                    <div class="campaign-title">🚀 Product Launch - AI Tool v2.0</div>
+                                    <span class="campaign-status running">Running</span>
+                                </div>
+                                <div class="campaign-meta">
+                                    <div class="campaign-meta-item">
+                                        <span>📹</span> 12 content pieces
+                                    </div>
+                                    <div class="campaign-meta-item">
+                                        <span>📅</span> Jan 15 - Feb 15
+                                    </div>
+                                    <div class="campaign-meta-item">
+                                        <span>🌐</span> 4 platforms
+                                    </div>
+                                </div>
+                                <div class="campaign-progress">
+                                    <div class="campaign-progress-bar">
+                                        <div class="campaign-progress-fill" style="width: 65%"></div>
+                                    </div>
+                                    <div class="campaign-progress-text">
+                                        <span>8 of 12 published</span>
+                                        <span>65% complete</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="campaign-card">
+                                <div class="campaign-header">
+                                    <div class="campaign-title">📚 Educational Series - AI Basics</div>
+                                    <span class="campaign-status scheduled">Scheduled</span>
+                                </div>
+                                <div class="campaign-meta">
+                                    <div class="campaign-meta-item">
+                                        <span>📹</span> 8 content pieces
+                                    </div>
+                                    <div class="campaign-meta-item">
+                                        <span>📅</span> Feb 1 - Feb 28
+                                    </div>
+                                    <div class="campaign-meta-item">
+                                        <span>🌐</span> 3 platforms
+                                    </div>
+                                </div>
+                                <div class="campaign-progress">
+                                    <div class="campaign-progress-bar">
+                                        <div class="campaign-progress-fill" style="width: 0%"></div>
+                                    </div>
+                                    <div class="campaign-progress-text">
+                                        <span>0 of 8 published</span>
+                                        <span>Starts Feb 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="campaign-card">
+                                <div class="campaign-header">
+                                    <div class="campaign-title">🎉 Holiday Special Campaign</div>
+                                    <span class="campaign-status completed">Completed</span>
+                                </div>
+                                <div class="campaign-meta">
+                                    <div class="campaign-meta-item">
+                                        <span>📹</span> 15 content pieces
+                                    </div>
+                                    <div class="campaign-meta-item">
+                                        <span>📅</span> Dec 1 - Dec 31
+                                    </div>
+                                    <div class="campaign-meta-item">
+                                        <span>👁️</span> 125K views
+                                    </div>
+                                </div>
+                                <div class="campaign-progress">
+                                    <div class="campaign-progress-bar">
+                                        <div class="campaign-progress-fill" style="width: 100%"></div>
+                                    </div>
+                                    <div class="campaign-progress-text">
+                                        <span>15 of 15 published</span>
+                                        <span>100% complete</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campaign Templates -->
+                    <div class="glass-card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">Campaign Templates
+                                <span class="help-bubble" tabindex="0" aria-label="Help for Campaign Templates">
+                                    <span class="help-bubble-icon">?</span>
+                                    <div class="help-bubble-content position-bottom">
+                                        <div class="help-bubble-title">Quick Start Templates</div>
+                                        <div class="help-bubble-text">Pre-configured campaign workflows for common use cases. Select a template to quickly set up a new campaign with optimized settings.</div>
+                                    </div>
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <div class="content-item" onclick="Dashboard.createCampaignFromTemplate('launch')" style="cursor: pointer;">
+                                <div class="content-thumbnail">🚀</div>
+                                <div class="content-info">
+                                    <div class="content-name">Product Launch</div>
+                                    <div class="content-meta">10 content pieces, 2 weeks</div>
+                                </div>
+                            </div>
+                            <div class="content-item" onclick="Dashboard.createCampaignFromTemplate('evergreen')" style="cursor: pointer;">
+                                <div class="content-thumbnail">🌲</div>
+                                <div class="content-info">
+                                    <div class="content-name">Evergreen Content</div>
+                                    <div class="content-meta">5 pieces/week, ongoing</div>
+                                </div>
+                            </div>
+                            <div class="content-item" onclick="Dashboard.createCampaignFromTemplate('event')" style="cursor: pointer;">
+                                <div class="content-thumbnail">🎉</div>
+                                <div class="content-info">
+                                    <div class="content-name">Event Promotion</div>
+                                    <div class="content-meta">Pre, during, post event</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
+    </div>
+    
+    <!-- Campaign Wizard Modal -->
+    <div id="campaign-wizard-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">🎯 Create New Campaign</h3>
+                <button class="modal-close" onclick="Dashboard.closeModal('campaign-wizard-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Wizard Steps -->
+                <div class="workflow-pipeline" style="padding: 16px 0;">
+                    <div class="workflow-step active" id="wizard-step-1">
+                        <div class="workflow-step-icon">📝</div>
+                        <div class="workflow-step-number">1</div>
+                        <div class="workflow-step-label">Details</div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-step" id="wizard-step-2">
+                        <div class="workflow-step-icon">🌐</div>
+                        <div class="workflow-step-number">2</div>
+                        <div class="workflow-step-label">Platforms</div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-step" id="wizard-step-3">
+                        <div class="workflow-step-icon">🎨</div>
+                        <div class="workflow-step-number">3</div>
+                        <div class="workflow-step-label">Content</div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-step" id="wizard-step-4">
+                        <div class="workflow-step-icon">📅</div>
+                        <div class="workflow-step-number">4</div>
+                        <div class="workflow-step-label">Schedule</div>
+                    </div>
+                </div>
+                
+                <!-- Step 1: Campaign Details -->
+                <div class="wizard-step-content" id="wizard-content-1">
+                    <div class="form-group">
+                        <label class="form-label">Campaign Name
+                            <span class="help-bubble" tabindex="0" aria-label="Help for Campaign Name">
+                                <span class="help-bubble-icon">?</span>
+                                <div class="help-bubble-content">
+                                    <div class="help-bubble-title">Campaign Name</div>
+                                    <div class="help-bubble-text">Give your campaign a memorable name to easily identify it later.</div>
+                                </div>
+                            </span>
+                        </label>
+                        <input type="text" class="form-input" id="campaign-name" placeholder="e.g., Q1 Product Launch">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Campaign Goal
+                            <span class="help-bubble" tabindex="0" aria-label="Help for Campaign Goal">
+                                <span class="help-bubble-icon">?</span>
+                                <div class="help-bubble-content">
+                                    <div class="help-bubble-title">Campaign Goal</div>
+                                    <div class="help-bubble-text">Describe what you want to achieve. The AI will optimize content generation based on this goal.</div>
+                                </div>
+                            </span>
+                        </label>
+                        <textarea class="form-input" id="campaign-goal" rows="3" placeholder="What do you want to achieve with this campaign?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Target Audience</label>
+                        <input type="text" class="form-input" id="campaign-audience" placeholder="e.g., Tech-savvy professionals aged 25-45">
+                    </div>
+                </div>
+                
+                <!-- Step 2: Platform Selection -->
+                <div class="wizard-step-content hidden" id="wizard-content-2">
+                    <p class="card-subtitle" style="margin-bottom: 16px;">Select platforms to publish your campaign content:</p>
+                    <div class="platform-selector">
+                        <label class="platform-option">
+                            <input type="checkbox" name="platform" value="youtube">
+                            <div class="platform-option-icon">▶️</div>
+                            <div class="platform-option-name">YouTube</div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="platform" value="instagram">
+                            <div class="platform-option-icon">📸</div>
+                            <div class="platform-option-name">Instagram</div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="platform" value="tiktok">
+                            <div class="platform-option-icon">🎵</div>
+                            <div class="platform-option-name">TikTok</div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="platform" value="twitter">
+                            <div class="platform-option-icon">🐦</div>
+                            <div class="platform-option-name">Twitter/X</div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="platform" value="linkedin">
+                            <div class="platform-option-icon">💼</div>
+                            <div class="platform-option-name">LinkedIn</div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="platform" value="facebook">
+                            <div class="platform-option-icon">📘</div>
+                            <div class="platform-option-name">Facebook</div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Content Settings -->
+                <div class="wizard-step-content hidden" id="wizard-content-3">
+                    <div class="form-group">
+                        <label class="form-label">Number of Content Pieces
+                            <span class="help-bubble" tabindex="0" aria-label="Help for Number of Content Pieces">
+                                <span class="help-bubble-icon">?</span>
+                                <div class="help-bubble-content">
+                                    <div class="help-bubble-title">Content Quantity</div>
+                                    <div class="help-bubble-text">AI will generate this many unique content pieces for your campaign, each optimized for the selected platforms.</div>
+                                </div>
+                            </span>
+                        </label>
+                        <select class="form-input" id="campaign-content-count">
+                            <option value="5">5 pieces</option>
+                            <option value="10" selected>10 pieces</option>
+                            <option value="15">15 pieces</option>
+                            <option value="20">20 pieces</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content Types</label>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="content-type-short-video" name="content-type" value="short-video" checked> Short Videos (15-60s)
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="content-type-image-text" name="content-type" value="image-with-text" checked> Images with Text
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="content-type-long-video" name="content-type" value="long-form-video"> Long-form Video
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="content-type-text-post" name="content-type" value="text-post" checked> Text Posts
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content Tone</label>
+                        <select class="form-input" id="campaign-tone">
+                            <option value="professional">Professional</option>
+                            <option value="casual">Casual & Friendly</option>
+                            <option value="humorous">Humorous</option>
+                            <option value="educational">Educational</option>
+                            <option value="inspirational">Inspirational</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Schedule -->
+                <div class="wizard-step-content hidden" id="wizard-content-4">
+                    <div class="form-group">
+                        <label class="form-label">Campaign Duration</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <label class="form-label" style="font-size: 12px;">Start Date</label>
+                                <input type="date" class="form-input" id="campaign-start">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size: 12px;">End Date</label>
+                                <input type="date" class="form-input" id="campaign-end">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Publishing Frequency
+                            <span class="help-bubble" tabindex="0" aria-label="Help for Publishing Frequency">
+                                <span class="help-bubble-icon">?</span>
+                                <div class="help-bubble-content">
+                                    <div class="help-bubble-title">Publishing Frequency</div>
+                                    <div class="help-bubble-text">How often content should be published. AI will distribute your content pieces evenly across the campaign duration.</div>
+                                </div>
+                            </span>
+                        </label>
+                        <select class="form-input" id="campaign-frequency">
+                            <option value="daily">Daily</option>
+                            <option value="every-other-day" selected>Every other day</option>
+                            <option value="twice-weekly">Twice a week</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="optimal">AI Optimal (recommended)</option>
+                        </select>
+                    </div>
+                    <div class="toggle-container">
+                        <div>
+                            <div class="toggle-label">Auto-publish content</div>
+                            <div class="toggle-description">Automatically publish when scheduled, or require manual approval</div>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="campaign-auto-publish">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer wizard-actions">
+                <button class="btn btn-secondary" id="wizard-prev-btn" onclick="Dashboard.prevWizardStep()" style="display: none;">← Previous</button>
+                <div style="flex: 1;"></div>
+                <button class="btn btn-secondary" onclick="Dashboard.closeModal('campaign-wizard-modal')">Cancel</button>
+                <button class="btn btn-primary" id="wizard-next-btn" onclick="Dashboard.nextWizardStep()">Next →</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Global Help Modal -->
+    <div id="global-help-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">❓ Help & Quick Start Guide</h3>
+                <button class="modal-close" onclick="Dashboard.closeModal('global-help-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="content-list">
+                    <div class="content-item">
+                        <div class="content-thumbnail">⚡</div>
+                        <div class="content-info">
+                            <div class="content-name">Generate Content</div>
+                            <div class="content-meta">Click "Generate Content" to let AI create content based on trending topics automatically.</div>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-thumbnail">🎯</div>
+                        <div class="content-info">
+                            <div class="content-name">Create Campaigns</div>
+                            <div class="content-meta">Use campaign workflows to plan and automate content across multiple platforms.</div>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-thumbnail">🧬</div>
+                        <div class="content-info">
+                            <div class="content-name">Evolution Loop</div>
+                            <div class="content-meta">The system learns from engagement data and evolves content parameters automatically.</div>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-thumbnail">⚙️</div>
+                        <div class="content-info">
+                            <div class="content-name">Settings</div>
+                            <div class="content-meta">Configure API keys and connect your social media accounts in Settings.</div>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="content-thumbnail">💡</div>
+                        <div class="content-info">
+                            <div class="content-name">Help Bubbles</div>
+                            <div class="content-meta">Look for the (?) icons throughout the app for contextual help tips.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="Dashboard.closeModal('global-help-modal')">Got it!</button>
+            </div>
+        </div>
     </div>
     
     <!-- Toast Container -->
