@@ -2,7 +2,6 @@
 
 import pytest
 import numpy as np
-from datetime import datetime
 
 from src.sentinel.models import TrendData, CreativeBrief, TrendHistory
 from src.sentinel.sentinel import SentinelLayer
