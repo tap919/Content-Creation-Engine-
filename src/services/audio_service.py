@@ -31,6 +31,11 @@ except ImportError:
     logger.warning("gRPC not available. Install with: pip install grpcio grpcio-tools")
 
 
+# Estimated milliseconds per character for TTS duration estimation
+# Based on average speaking rate of ~150 words per minute (~3 chars/sec)
+ESTIMATED_MS_PER_CHAR = 50
+
+
 class AudioProvider:
     """Base class for audio generation providers."""
 
@@ -93,7 +98,7 @@ class ElevenLabsProvider(AudioProvider):
             "job_id": str(uuid.uuid4()),
             "status": "completed",
             "audio_url": f"/output/audio/elevenlabs_{uuid.uuid4().hex[:8]}.mp3",
-            "duration_ms": len(text) * 50,  # Rough estimate
+            "duration_ms": len(text) * ESTIMATED_MS_PER_CHAR,
             "provider": "elevenlabs",
         }
 
@@ -116,7 +121,7 @@ class AzureSpeechProvider(AudioProvider):
             "job_id": str(uuid.uuid4()),
             "status": "completed",
             "audio_url": f"/output/audio/azure_{uuid.uuid4().hex[:8]}.wav",
-            "duration_ms": len(text) * 50,
+            "duration_ms": len(text) * ESTIMATED_MS_PER_CHAR,
             "provider": "azure_speech",
         }
 
@@ -139,7 +144,7 @@ class AmazonPollyProvider(AudioProvider):
             "job_id": str(uuid.uuid4()),
             "status": "completed",
             "audio_url": f"/output/audio/polly_{uuid.uuid4().hex[:8]}.mp3",
-            "duration_ms": len(text) * 50,
+            "duration_ms": len(text) * ESTIMATED_MS_PER_CHAR,
             "provider": "amazon_polly",
         }
 

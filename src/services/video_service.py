@@ -200,11 +200,20 @@ class VideoServicer:
                 }
             )
 
+            # Build thumbnail URL based on output type
+            output_url = result.get("output_url", "")
+            if output_url.endswith(".mp4"):
+                thumbnail_url = output_url.replace(".mp4", "_thumb.jpg")
+            elif output_url.endswith(".png"):
+                thumbnail_url = output_url.replace(".png", "_thumb.jpg")
+            else:
+                thumbnail_url = output_url + "_thumb.jpg"
+
             return {
                 "job_id": job_id,
                 "status": "completed",
-                "video_url": result.get("output_url"),
-                "thumbnail_url": result.get("output_url", "").replace(".mp4", "_thumb.jpg"),
+                "video_url": output_url,
+                "thumbnail_url": thumbnail_url,
                 "quality_score": 0.85,
                 "processing_time_ms": 1000,
             }

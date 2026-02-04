@@ -46,7 +46,7 @@ class ServicesConfig(BaseModel):
     avatar_service: ServiceConfig = Field(
         default_factory=lambda: ServiceConfig(
             port=50054,
-            providers=["d-id", "tavus"]
+            providers=["d_id", "tavus"]
         )
     )
 

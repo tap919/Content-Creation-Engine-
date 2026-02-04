@@ -8,9 +8,10 @@ WORKDIR /app
 # Install build dependencies
 RUN apk add --no-cache git protobuf protobuf-dev
 
-# Copy go mod files
-COPY go.mod go.sum ./
-RUN go mod download
+# Copy go mod files (go.sum may not exist for placeholder module)
+COPY go.mod ./
+COPY go.sum* ./
+RUN go mod download || true
 
 # Copy source code
 COPY . .

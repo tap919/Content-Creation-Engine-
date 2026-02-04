@@ -13,7 +13,6 @@ services:
   # Handles REST/WebSocket API, authentication, rate limiting,
   # and routes requests to Python services via gRPC
   gateway:
-    image: golang:1.22-alpine
     build:
       context: ./go-gateway
       dockerfile: Dockerfile
