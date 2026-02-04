@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     loadInitialData();
     initializeToggles();
+    initializePlatformSelector();
 });
 
 // Navigation
@@ -950,26 +951,21 @@ function createCampaignFromTemplate(templateType) {
     
     const template = templates[templateType];
     if (template) {
-        // Pre-fill form fields
+        // Open the campaign wizard before accessing its form fields
+        openCampaignWizard();
+
+        // Pre-fill form fields after wizard is opened
         const nameInput = document.getElementById('campaign-name');
         const goalInput = document.getElementById('campaign-goal');
         const contentCountInput = document.getElementById('campaign-content-count');
         const toneInput = document.getElementById('campaign-tone');
         const frequencyInput = document.getElementById('campaign-frequency');
-        
+
         if (nameInput) nameInput.value = template.name;
         if (goalInput) goalInput.value = template.goal;
         if (contentCountInput) contentCountInput.value = template.contentCount;
         if (toneInput) toneInput.value = template.tone;
         if (frequencyInput) frequencyInput.value = template.frequency;
-        
-        openCampaignWizard();
-        
-        // Apply template values after wizard opens
-        setTimeout(() => {
-            if (nameInput) nameInput.value = template.name;
-            if (goalInput) goalInput.value = template.goal;
-        }, 100);
         
         showToast('info', 'Template Applied', `Using "${templateType}" template`);
     }
@@ -993,26 +989,18 @@ async function loadCampaignsList() {
 // Initialize platform selector interactions
 function initializePlatformSelector() {
     document.querySelectorAll('.platform-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-            // Only toggle selected class - let native checkbox behavior handle the checked state
-            // The label element wraps the checkbox, so clicking anywhere toggles it automatically
-            option.classList.toggle('selected');
-        });
-        
         // Sync selected class with checkbox state on page load and checkbox change
         const checkbox = option.querySelector('input[type="checkbox"]');
         if (checkbox) {
+            // Ensure initial visual state matches the checkbox checked state
+            option.classList.toggle('selected', checkbox.checked);
+            
             checkbox.addEventListener('change', () => {
                 option.classList.toggle('selected', checkbox.checked);
             });
         }
     });
 }
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    initializePlatformSelector();
-});
 
 // Export for global access
 window.Dashboard = {

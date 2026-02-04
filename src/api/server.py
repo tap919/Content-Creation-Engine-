@@ -78,6 +78,36 @@ class PreferencesRequest(BaseModel):
     cycle_interval: Optional[int] = Field(default=None, ge=1800, le=86400)
 
 
+class CampaignCreateRequest(BaseModel):
+    """Request model for creating a campaign."""
+    name: str = Field(..., min_length=1, max_length=200, description="Campaign name")
+    goal: Optional[str] = Field(default=None, max_length=1000, description="Campaign goal")
+    audience: Optional[str] = Field(default=None, max_length=500, description="Target audience")
+    platforms: List[str] = Field(default_factory=list, description="Target platforms")
+    contentCount: Optional[int] = Field(default=10, ge=1, le=100, description="Number of content pieces")
+    contentTypes: Optional[List[str]] = Field(default_factory=list, description="Types of content to create")
+    tone: Optional[str] = Field(default="professional", description="Content tone")
+    startDate: Optional[str] = Field(default=None, description="Campaign start date")
+    endDate: Optional[str] = Field(default=None, description="Campaign end date")
+    frequency: Optional[str] = Field(default="every-other-day", description="Publishing frequency")
+    autoPublish: Optional[bool] = Field(default=False, description="Auto-publish content")
+
+
+class CampaignUpdateRequest(BaseModel):
+    """Request model for updating a campaign."""
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200, description="Campaign name")
+    goal: Optional[str] = Field(default=None, max_length=1000, description="Campaign goal")
+    audience: Optional[str] = Field(default=None, max_length=500, description="Target audience")
+    platforms: Optional[List[str]] = Field(default=None, description="Target platforms")
+    contentCount: Optional[int] = Field(default=None, ge=1, le=100, description="Number of content pieces")
+    tone: Optional[str] = Field(default=None, description="Content tone")
+    startDate: Optional[str] = Field(default=None, description="Campaign start date")
+    endDate: Optional[str] = Field(default=None, description="Campaign end date")
+    frequency: Optional[str] = Field(default=None, description="Publishing frequency")
+    autoPublish: Optional[bool] = Field(default=None, description="Auto-publish content")
+    status: Optional[str] = Field(default=None, description="Campaign status")
+
+
 # Dependency to get factory instance
 async def get_factory():
     """Dependency that provides the factory instance."""
@@ -433,7 +463,7 @@ def create_app(config: Config) -> FastAPI:
         }
     
     @app.post("/api/campaigns")
-    async def create_campaign(campaign: dict):
+    async def create_campaign(campaign: CampaignCreateRequest):
         """
         Create a new campaign workflow.
         
@@ -444,14 +474,14 @@ def create_app(config: Config) -> FastAPI:
         logger.info(
             "Campaign created",
             campaign_id=campaign_id,
-            name=campaign.get("name"),
-            platforms=campaign.get("platforms", [])
+            name=campaign.name,
+            platforms=campaign.platforms
         )
         
         return {
             "status": "success",
             "campaign_id": f"camp-{campaign_id}",
-            "message": f"Campaign '{campaign.get('name', 'Untitled')}' created successfully"
+            "message": f"Campaign '{campaign.name}' created successfully"
         }
     
     @app.get("/api/campaigns/{campaign_id}")
@@ -473,10 +503,11 @@ def create_app(config: Config) -> FastAPI:
         }
     
     @app.patch("/api/campaigns/{campaign_id}")
-    async def update_campaign(campaign_id: str, updates: dict):
+    async def update_campaign(campaign_id: str, updates: CampaignUpdateRequest):
         """Update campaign settings."""
-        logger.info("Campaign updated", campaign_id=campaign_id, updates=list(updates.keys()))
-        return {"status": "success", "campaign_id": campaign_id}
+        updated_fields = {k: v for k, v in updates.model_dump().items() if v is not None}
+        logger.info("Campaign updated", campaign_id=campaign_id, updates=list(updated_fields.keys()))
+        return {"status": "success", "campaign_id": campaign_id, "updated": updated_fields}
     
     @app.delete("/api/campaigns/{campaign_id}")
     async def delete_campaign(campaign_id: str):
