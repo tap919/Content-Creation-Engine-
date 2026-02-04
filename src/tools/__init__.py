@@ -21,6 +21,9 @@ Image Processing:
 AI & Machine Learning:
 - DeepFace: Face recognition and analysis
 - spaCy: NLP for text processing and hashtag extraction
+
+Social Media:
+- Platform-specific posting handlers (YouTube, Instagram, TikTok, etc.)
 """
 
 from .video import FFmpegTool, MoviePyTool
@@ -28,6 +31,15 @@ from .audio import PydubTool, LibrosaTool, WhisperTool
 from .image import PillowTool, OpenCVTool, RembgTool
 from .nlp import SpacyTool
 from .face import DeepFaceTool
+from .social_media import (
+    YouTubePlatform,
+    InstagramPlatform,
+    TikTokPlatform,
+    TwitterPlatform,
+    FacebookPlatform,
+    LinkedInPlatform,
+    get_platform,
+)
 
 __all__ = [
     # Video tools
@@ -45,4 +57,12 @@ __all__ = [
     "SpacyTool",
     # Face analysis tools
     "DeepFaceTool",
+    # Social media platforms
+    "YouTubePlatform",
+    "InstagramPlatform",
+    "TikTokPlatform",
+    "TwitterPlatform",
+    "FacebookPlatform",
+    "LinkedInPlatform",
+    "get_platform",
 ]
