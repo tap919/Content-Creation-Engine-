@@ -328,13 +328,13 @@ class BabyCapCut:
             if final:
                 try:
                     final.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("Failed to close final concatenated clip", error=str(e), exc_info=True)
             for clip in clips:
                 try:
                     clip.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("Failed to close video clip during cleanup", error=str(e), exc_info=True)
     
     def add_background_music(
         self,
