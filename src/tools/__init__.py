@@ -24,6 +24,12 @@ AI & Machine Learning:
 
 Social Media:
 - Platform-specific posting handlers (YouTube, Instagram, TikTok, etc.)
+
+Baby Tools (Open-Source Alternatives):
+- BabyCanva: Simple design tool (Canva alternative)
+- BabyCapCut: Video editor (CapCut alternative)
+- BabyOpusClip: Auto-clip extraction (Opus Clip alternative)
+- BabyAnalytics: Self-hosted analytics (Google Analytics alternative)
 """
 
 from .video import FFmpegTool, MoviePyTool
@@ -40,6 +46,12 @@ from .social_media import (
     LinkedInPlatform,
     get_platform,
 )
+
+# Baby Tools - Open-source alternatives to commercial tools
+from .baby_design import BabyCanva
+from .baby_video_editor import BabyCapCut
+from .baby_clips import BabyOpusClip
+from .baby_analytics import BabyAnalytics
 
 __all__ = [
     # Video tools
@@ -65,4 +77,9 @@ __all__ = [
     "FacebookPlatform",
     "LinkedInPlatform",
     "get_platform",
+    # Baby Tools
+    "BabyCanva",
+    "BabyCapCut",
+    "BabyOpusClip",
+    "BabyAnalytics",
 ]

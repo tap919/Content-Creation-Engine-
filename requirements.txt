@@ -25,6 +25,12 @@ torchaudio>=2.0.0
 # NLP
 spacy>=3.7.0
 
+# Sentiment Analysis for Baby Tools
+vaderSentiment>=3.3.2
+
+# Scene Detection for Baby Tools
+scenedetect>=0.6.2
+
 # Face Analysis
 deepface>=0.0.79
 tf-keras>=2.15.0
