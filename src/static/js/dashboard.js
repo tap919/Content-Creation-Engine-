@@ -880,7 +880,7 @@ async function createCampaign() {
         });
         
         if (response.ok) {
-            const result = await response.json();
+            await response.json();
             showToast('success', 'Campaign Created', `"${CampaignWizard.data.name}" is ready to go!`);
             closeModal('campaign-wizard-modal');
             
