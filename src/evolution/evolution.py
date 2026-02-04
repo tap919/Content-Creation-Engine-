@@ -8,7 +8,7 @@ described in the mathematical specification.
 
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 import structlog
@@ -65,7 +65,7 @@ class EvolutionaryLoop:
         The check will be performed after sufficient engagement data
         has been collected (typically 24-48 hours).
         """
-        self.pending_content[content_id] = datetime.utcnow()
+        self.pending_content[content_id] = datetime.now(timezone.utc)
         logger.info("Fitness check scheduled", content_id=content_id)
         
     async def collect_engagement(self, content_id: str, platform: str) -> EngagementMetrics:

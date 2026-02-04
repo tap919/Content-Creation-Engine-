@@ -5,7 +5,7 @@ These models represent the production artifacts and agent outputs
 as defined in the mathematical specification.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 from pathlib import Path
@@ -33,7 +33,7 @@ class AgentResult(BaseModel):
     
     agent_role: AgentRole
     success: bool = True
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Output paths
     output_path: Optional[Path] = None
@@ -119,7 +119,7 @@ class GeneratedContent(BaseModel):
     
     id: str = Field(..., description="Unique content identifier")
     brief_id: str = Field(..., description="Source creative brief ID")
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Content paths
     video_path: Optional[Path] = None

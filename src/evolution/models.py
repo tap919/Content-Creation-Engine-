@@ -5,7 +5,7 @@ These models represent the engagement metrics and fitness functions
 as defined in the mathematical specification.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from pydantic import BaseModel, Field
 import numpy as np
@@ -19,7 +19,7 @@ class EngagementMetrics(BaseModel):
     """
     content_id: str
     platform: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Core metrics
     views: int = Field(default=0, ge=0)
@@ -62,7 +62,7 @@ class FitnessScore(BaseModel):
     f_t(θ_t) = 0.4 * (likes/views) + 0.3 * (shares/views) + 0.3 * watch% - 0.1 * cost(t)
     """
     content_id: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Component scores
     like_score: float = Field(default=0.0)
@@ -124,7 +124,7 @@ class BrandParameters(BaseModel):
     """
     id: str
     generation: int = Field(default=0, description="Evolution generation")
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Music parameters (θ_music ∈ Θ_music ⊂ R^5)
     music_tempo: float = Field(default=90.0, ge=60.0, le=180.0)

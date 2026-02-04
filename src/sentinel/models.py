@@ -5,7 +5,7 @@ These models represent the state and action spaces as defined in the
 mathematical specification for the Agentic Content Factory.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from pydantic import BaseModel, Field
 import numpy as np
@@ -20,7 +20,7 @@ class TrendData(BaseModel):
     id: str = Field(..., description="Unique identifier for the trend")
     topic: str = Field(..., description="Main topic/theme of the trend")
     source: str = Field(..., description="Source of the trend data")
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Embedding vector (512-dim CLIP/BERT vector from biotech news)
     embedding: Optional[list[float]] = Field(
@@ -65,7 +65,7 @@ class CreativeBrief(BaseModel):
     """
     id: str = Field(..., description="Unique identifier for the brief")
     trend_id: str = Field(..., description="ID of the source trend")
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Core brief content
     topic: str = Field(..., description="Main topic for content")
