@@ -1,0 +1,40 @@
+give me a integration outline for each
+
+Postiz-app integrates via REST API for seamless scheduling in your synth-like engine, while InstaPy offers Python lib calls for IG-specific posting.[1][2] These outlines chain with Open-Sora/YuE outputs, using Docker for modularity per your auto-discovery prefs.[3]
+
+## Postiz-app Outline
+Self-host with Docker Compose (PostgreSQL/Temporal), generate API key from settings.[1]
+Chain generation: Run YuE/Open-Sora → save MP4 → use wizard for JSON payload (e.g., {"content": "caption", "attachments": ["video.mp4"]}) → POST /public/v1/posts with Authorization: Bearer <key>.[1][4]
+Modular: Wrap in Node.js/TS service (axios fetch), expose as Cheetah module; cron or Workers for auto-post at optimal times.[5][6]
+
+## ImPosting Outline
+Docker up Django app, configure OAuth for IG pro/X (ngrok callbacks), migrate DB.
+Pipeline: Content gen → upload via /api/upload (multipart form) → POST /api/schedule with {"post_data": {...}, "scheduled_at": "2026-02-04T10:00:00Z"}.
+Extend: Python/TS client hits endpoints; integrate folder watcher for auto-queue like your science tools.
+
+## InstaPy Outline
+Pip install instapy/selenium, chromedriver Docker.[2]
+Script: from instapy import InstaPy; session = InstaPy(...); session.login(); session.upload_video("gen_video.mp4", "AI music reel #ncsound").[2]
+Engine fit: Embed as subprocess in FastAPI backend, throttle sleeps; chain post-gen with set_comments from LLM.[7]
+
+Citations:
+[1] API Overview - Postiz Documentation https://docs.postiz.com/public-api/introduction
+[2] How to Make an Instagram Bot With Python and InstaPy https://realpython.com/instagram-bot-python-instapy/
+[3] i basically need a desktop tool that functions like a modular synth that allows me to sub in and out various software tools that ive built to produce various types of deliverables. this tool would basically analyze the tools and create various automation builds that can be chosen from to produce whatever those tools in that set may comprise of. https://www.perplexity.ai/search/d96f07c9-4074-4be0-8132-bdbaa3852d4c
+[4] List Integrations - Postiz Documentation https://docs.postiz.com/public-api/integrations/list
+[5] Based on your description, it sounds like you're looking to build a custom content creation and management tool—essentially a unified dashboard that integrates multiple APIs for generating content (e.g., from AI services like OpenAI or Google Cloud) ...
+
+...atforms change APIs frequently (e.g., Twitter's recent shifts to paid tiers). Budget for premium access if needed (e.g., $100/month for Twitter API).
+   - **Costs**: Free tiers exist, but heavy use could rack up fees (e.g., OpenAI charges per token). https://www.perplexity.ai/search/181ce5e0-6e98-4afe-9fb8-8dea03f41c97
+[6] Integrate the Postiz API with the Render API - Pipedream https://pipedream.com/apps/postiz/integrations/render
+[7] How to run InstaPy in Docker |・∀・ https://geek-cookbook.funkypenguin.co.nz/recipes/instapy/
+[8] Postiz - Apps Documentation - Make https://apps.make.com/postiz
+[9] Postiz: The All-in-One agentic social media scheduling tool https://postiz.com
+[10] Schedule Posts via API - Postpone API Docs https://developers.postpone.app/scheduling-posts
+[11] Instagram Bot using Python - DEV Community https://dev.to/japneet121/instagram-bot-using-python-4a54
+[12] Postiz Integration - Boost.space https://boost.space/integrations/postiz
+[13] Social Media APIs for Posting, Scheduling, and Analytics - GitHub https://github.com/ayrshare/social-media-api
+[14] SpandanM110/InstaPy - GitHub https://github.com/SpandanM110/InstaPy
+[15] Unlocking Automation: A Deep Dive into the Postiz API - Skywork.ai https://skywork.ai/skypage/en/Unlocking-Automation:-A-Deep-Dive-into-the-Postiz-API/1976120844408123392
+[16] Released a Social Media Scheduling API (Do's, Dont's) - Reddit https://www.reddit.com/r/SaaS/comments/1l9v0xu/released_a_social_media_scheduling_api_dos_donts/
+[17] Automate Instagram with Python and Instapy - YouTube https://www.youtube.com/watch?v=7oltYg82bVU
