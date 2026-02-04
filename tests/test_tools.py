@@ -9,7 +9,6 @@ Tests the wrappers for:
 - Face analysis tools (DeepFace)
 """
 
-import pytest
 from pathlib import Path
 from unittest.mock import Mock, patch
 import tempfile
