@@ -757,9 +757,60 @@
     <script src="/static/js/dashboard.js"></script>
     <script>
         function showSettingsTab(tab, e) {
-            // Update active tab
-            document.querySelectorAll('#page-settings .tab').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
+            const settingsPage = document.getElementById('page-settings');
+            if (!settingsPage) {
+                // If the settings page is not present, do nothing.
+                return;
+            }
+
+            // Update active tab styling
+            settingsPage.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+            // Prefer currentTarget (the element with the event listener) over target
+            const tabElement = (e && e.currentTarget && e.currentTarget.classList && e.currentTarget.classList.contains('tab'))
+                ? e.currentTarget
+                : (e && e.target && e.target.classList && e.target.classList.contains('tab'))
+                    ? e.target
+                    : null;
+
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+
+            // Hide all settings content sections
+            const allSections = settingsPage.querySelectorAll(
+                '[data-settings-section], .settings-section, .settings-content'
+            );
+            allSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Determine the section to show based on the tab key
+            let activeSection = settingsPage.querySelector('[data-settings-section="' + tab + '"]');
+
+            if (!activeSection) {
+                // Fallback to ID convention: #settings-<tab>
+                activeSection = settingsPage.querySelector('#settings-' + tab);
+            }
+
+            if (!activeSection && allSections.length === 4) {
+                // As a final fallback, map known tab keys to section indices
+                const indexMap = {
+                    'api-keys': 0,
+                    'connections': 1,
+                    'integrations': 2,
+                    'preferences': 3
+                };
+                const idx = indexMap[tab];
+                if (typeof idx === 'number' && allSections[idx]) {
+                    activeSection = allSections[idx];
+                }
+            }
+
+            // Show the selected section, if we found one
+            if (activeSection) {
+                activeSection.classList.remove('hidden');
+            }
         }
     </script>
 </body>
