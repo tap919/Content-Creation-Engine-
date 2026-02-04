@@ -5,9 +5,10 @@ These models represent the engagement metrics and fitness functions
 as defined in the mathematical specification.
 """
 
+import uuid
 from datetime import datetime, timezone
-from typing import Optional
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel, ConfigDict, Field
 import numpy as np
 
 
@@ -149,7 +150,7 @@ class BrandParameters(BaseModel):
     def to_vector(self) -> np.ndarray:
         """Convert parameters to optimization vector."""
         return np.array([
-            self.music_tempo / 180.0,  # Normalize to [0,1]
+            (self.music_tempo - 60.0) / 120.0,  # Normalize [60,180] to [0,1]
             self.music_energy,
             self.music_danceability,
             self.music_mood_weight,
@@ -163,12 +164,10 @@ class BrandParameters(BaseModel):
     @classmethod
     def from_vector(cls, vector: np.ndarray, base_params: "BrandParameters") -> "BrandParameters":
         """Create parameters from optimization vector."""
-        import uuid
-        
         return cls(
             id=str(uuid.uuid4()),
             generation=base_params.generation + 1,
-            music_tempo=float(np.clip(vector[0] * 180.0, 60.0, 180.0)),
+            music_tempo=float(np.clip(vector[0] * 120.0 + 60.0, 60.0, 180.0)),
             music_energy=float(np.clip(vector[1], 0.0, 1.0)),
             music_danceability=float(np.clip(vector[2], 0.0, 1.0)),
             music_mood_weight=float(np.clip(vector[3], 0.0, 1.0)),
@@ -182,8 +181,7 @@ class BrandParameters(BaseModel):
             fitness_history=base_params.fitness_history.copy(),
         )
     
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class EvolutionConfig(BaseModel):

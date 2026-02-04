@@ -11,7 +11,6 @@ Implementation of: Φ(E_t; φ) and HSE detection
 import asyncio
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 import structlog
 import numpy as np
@@ -190,8 +189,8 @@ class SentinelLayer:
         """Remove trends older than window_days."""
         cutoff = datetime.now(timezone.utc) - timedelta(days=self.history.window_days)
         self.history.trends = [
-            t for t in self.history.trends 
-            if t.timestamp.replace(tzinfo=timezone.utc) > cutoff
+            t for t in self.history.trends
+            if t.timestamp > cutoff
         ]
     
     def _generate_synthetic_trend(self) -> dict:

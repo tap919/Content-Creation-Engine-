@@ -31,7 +31,14 @@ mkdir -p output/images output/audio output/videos
 
 # Run tests
 echo "🧪 Running tests..."
-pytest tests/ -v --tb=short || echo "⚠️  Some tests failed (may be expected for placeholder code)"
+# Set ENFORCE_TEST_SUCCESS=1 to make test failures stop the build (recommended for CI)
+if [ "${ENFORCE_TEST_SUCCESS:-0}" = "1" ]; then
+    # In strict mode, let pytest failures stop the build (set -e is enabled)
+    pytest tests/ -v --tb=short
+else
+    # Default behavior: allow tests to fail without breaking the build
+    pytest tests/ -v --tb=short || echo "⚠️  Some tests failed (may be expected for placeholder code)"
+fi
 
 echo "✅ Build complete!"
 echo ""

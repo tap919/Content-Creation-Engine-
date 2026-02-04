@@ -103,10 +103,23 @@ class AgenticContentFactory:
         }
     
     async def _deploy_content(self, content) -> dict:
-        """Deploy content to configured platforms."""
+        """
+        Deploy content to configured platforms.
+
+        Note:
+            This method is currently a stub and does not perform real deployment.
+            The return value explicitly indicates that deployment has not occurred.
+        """
         # Placeholder for actual deployment logic
-        logger.info("Deploying content", content_id=content.id)
-        return {"deployed": True, "platforms": self.config.deployment_platforms}
+        logger.warning(
+            "Deployment not implemented; content not actually deployed",
+            content_id=content.id,
+        )
+        return {
+            "deployed": False,
+            "reason": "deployment_not_implemented",
+            "platforms": getattr(self.config, "deployment_platforms", []),
+        }
     
     async def start(self) -> None:
         """Start the continuous content factory loop."""

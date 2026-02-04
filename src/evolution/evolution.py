@@ -6,10 +6,8 @@ to optimize for audience response. It implements the evolutionary algorithm
 described in the mathematical specification.
 """
 
-import asyncio
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 
 import structlog
 import numpy as np
@@ -130,8 +128,8 @@ class EvolutionaryLoop:
         return fitness
     
     def _aggregate_metrics(
-        self, 
-        content_id: str, 
+        self,
+        content_id: str,
         metrics_list: list[EngagementMetrics]
     ) -> EngagementMetrics:
         """Aggregate engagement metrics across platforms."""
@@ -140,8 +138,13 @@ class EvolutionaryLoop:
         total_shares = sum(m.shares for m in metrics_list)
         total_comments = sum(m.comments for m in metrics_list)
         
-        # Weighted average watch time
-        avg_watch_time = np.mean([m.watch_time_percent for m in metrics_list])
+        # Weighted average watch time by views to reflect platform volume
+        if total_views > 0:
+            avg_watch_time = sum(
+                m.watch_time_percent * m.views for m in metrics_list
+            ) / total_views
+        else:
+            avg_watch_time = 0.0
         
         return EngagementMetrics(
             content_id=content_id,

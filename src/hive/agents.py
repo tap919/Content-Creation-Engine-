@@ -8,11 +8,10 @@ Multi-Agent System (MAS) with specialized AI agents:
 - Agent D (Audio): Generates music using MusicGen
 """
 
-import asyncio
 import uuid
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
+from typing import ClassVar, Optional
 import time
 
 import structlog
@@ -22,7 +21,7 @@ from src.sentinel.models import CreativeBrief
 from src.utils.config import Config
 from .models import (
     AgentResult, AgentRole, ImageVariation, AudioTrack,
-    TextOverlay, GeneratedContent
+    TextOverlay
 )
 
 logger = structlog.get_logger(__name__)
@@ -31,7 +30,7 @@ logger = structlog.get_logger(__name__)
 class BaseAgent(ABC):
     """Base class for all production hive agents."""
     
-    role: AgentRole
+    role: ClassVar[AgentRole]  # Must be set by subclasses
     
     def __init__(self, config: Config):
         self.config = config
@@ -137,7 +136,14 @@ class VisualistAgent(BaseAgent):
             "dynamic composition",
         ]
         
-        return f"{base_prompt}, {modifiers[variation_index % len(modifiers)]}"
+        # Use a seeded RNG based on the brief and variation index to avoid
+        # simple cyclic reuse of modifiers while keeping behavior deterministic.
+        seed_source = (brief.headline, brief.brand_aesthetic, variation_index)
+        seed = abs(hash(seed_source))
+        rng = np.random.default_rng(seed)
+        modifier = rng.choice(modifiers)
+        
+        return f"{base_prompt}, {modifier}"
     
     async def _generate_image(self, prompt: str, index: int) -> Path:
         """Generate image from prompt (placeholder)."""

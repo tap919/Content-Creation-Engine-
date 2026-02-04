@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 from pathlib import Path
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ContentType(str, Enum):
@@ -51,8 +51,7 @@ class AgentResult(BaseModel):
     # Error handling
     error_message: Optional[str] = None
     
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class ImageVariation(BaseModel):
@@ -71,8 +70,7 @@ class ImageVariation(BaseModel):
     selected: bool = False
     critic_notes: Optional[str] = None
     
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class AudioTrack(BaseModel):
@@ -91,8 +89,7 @@ class AudioTrack(BaseModel):
     # Quality metrics
     quality_score: float = Field(default=0.0, ge=0.0, le=1.0)
     
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class TextOverlay(BaseModel):
@@ -150,8 +147,7 @@ class GeneratedContent(BaseModel):
     deployed: bool = False
     platform_ids: dict[str, str] = Field(default_factory=dict)
     
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class HiveReward(BaseModel):

@@ -136,7 +136,7 @@ def create_app(config: Config) -> FastAPI:
             
             if not trend_data.is_high_signal and not request.force_generation:
                 return ContentResponse(
-                    content_id="",
+                    content_id="skipped",
                     status="skipped",
                     topic=trend_data.topic,
                 )
@@ -159,9 +159,14 @@ def create_app(config: Config) -> FastAPI:
                 video_url=str(content.video_path) if content.video_path else None,
             )
             
-        except Exception as e:
-            logger.error("Content generation failed", error=str(e))
-            raise HTTPException(status_code=500, detail=str(e))
+        except HTTPException as http_exc:
+            # Preserve existing HTTP errors (e.g., 4xx/5xx) raised by downstream components
+            raise http_exc
+
+        except Exception:
+            # Log full traceback for debugging while returning a generic error to clients
+            logger.exception("Content generation failed")
+            raise HTTPException(status_code=500, detail="Internal server error")
     
     @app.get("/parameters", response_model=ParametersResponse)
     async def get_parameters():

@@ -63,9 +63,9 @@ services:
   db:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=content_factory
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Set DB_PASSWORD in your environment or .env file}
+      - POSTGRES_DB=${POSTGRES_DB:-content_factory}
     ports:
       - "5432:5432"
     volumes:

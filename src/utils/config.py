@@ -7,11 +7,16 @@ Handles loading and validation of configuration for the Agentic Content Factory.
 from pathlib import Path
 from typing import Optional
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Config(BaseModel):
     """Main configuration for the Agentic Content Factory."""
+    
+    model_config = ConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8"
+    )
     
     # General settings
     app_name: str = Field(default="Agentic Content Factory")
@@ -58,10 +63,6 @@ class Config(BaseModel):
     # Production settings
     max_image_variations: int = Field(default=5)
     target_video_duration: int = Field(default=15)
-    
-    class model_config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 
 def load_config(config_path: Path) -> Config:
