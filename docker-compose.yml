@@ -82,9 +82,9 @@ services:
     ports:
       - "5678:5678"
     environment:
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=admin
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE:-true}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER?Set N8N_BASIC_AUTH_USER in your environment or .env file}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD?Set N8N_BASIC_AUTH_PASSWORD in your environment or .env file}
     volumes:
       - n8n_data:/home/node/.n8n
     profiles:
