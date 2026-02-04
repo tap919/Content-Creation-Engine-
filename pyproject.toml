@@ -44,11 +44,34 @@ dev = [
 audio = [
     "audiocraft>=1.0.0",
     "torchaudio>=2.0.0",
+    "pydub>=0.25.1",
+    "librosa>=0.10.1",
+    "openai-whisper>=20231117",
+]
+image = [
+    "opencv-python>=4.8.0",
+    "rembg>=2.0.50",
+    "deepface>=0.0.79",
+    "tf-keras>=2.15.0",
+]
+nlp = [
+    "spacy>=3.7.0",
 ]
 grpc = [
     "grpcio>=1.60.0",
     "grpcio-tools>=1.60.0",
     "protobuf>=4.25.0",
+]
+tools = [
+    # All open source tools for content creation
+    "pydub>=0.25.1",
+    "librosa>=0.10.1",
+    "openai-whisper>=20231117",
+    "opencv-python>=4.8.0",
+    "rembg>=2.0.50",
+    "deepface>=0.0.79",
+    "tf-keras>=2.15.0",
+    "spacy>=3.7.0",
 ]
 full = [
     "torch>=2.0.0",
@@ -59,6 +82,15 @@ full = [
     "grpcio>=1.60.0",
     "grpcio-tools>=1.60.0",
     "protobuf>=4.25.0",
+    # Tools
+    "pydub>=0.25.1",
+    "librosa>=0.10.1",
+    "openai-whisper>=20231117",
+    "opencv-python>=4.8.0",
+    "rembg>=2.0.50",
+    "deepface>=0.0.79",
+    "tf-keras>=2.15.0",
+    "spacy>=3.7.0",
 ]
 
 [project.scripts]

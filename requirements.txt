@@ -4,14 +4,33 @@ crewai>=0.28.0
 langchain>=0.1.0
 langchain-openai>=0.0.5
 
-# Media Processing
+# Media Processing - Video
 moviepy>=1.0.3
+# FFmpeg is a system dependency - install via apt/brew
+
+# Media Processing - Image
 Pillow>=10.0.0
-numpy>=1.24.0
+opencv-python>=4.8.0
+rembg>=2.0.50
+
+# Media Processing - Audio
+pydub>=0.25.1
+librosa>=0.10.1
+openai-whisper>=20231117
 
 # Audio Generation
 audiocraft>=1.0.0
 torchaudio>=2.0.0
+
+# NLP
+spacy>=3.7.0
+
+# Face Analysis
+deepface>=0.0.79
+tf-keras>=2.15.0
+
+# Core numerical
+numpy>=1.24.0
 
 # Trend Analysis & Scraping
 requests>=2.31.0

@@ -12,11 +12,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies
+# FFmpeg for video/audio processing
+# OpenCV dependencies (libsm6, libxext6, libxrender-dev, libglib2.0-0)
+# Audio processing (libsndfile1)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsm6 \
     libxext6 \
     libxrender-dev \
+    libglib2.0-0 \
+    libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
 # -------------------

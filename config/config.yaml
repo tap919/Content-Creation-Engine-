@@ -118,3 +118,60 @@ workflow:
   engine: "internal"  # Options: internal, prefect, luigi
   max_concurrent_jobs: 5
   job_timeout_seconds: 300
+
+# ============================================
+# Open Source Tools Configuration
+# ============================================
+# Settings for integrated open source tools
+
+tools:
+  # Video Processing
+  ffmpeg:
+    path: "ffmpeg"  # Path to FFmpeg executable
+    default_video_codec: "libx264"
+    default_audio_codec: "aac"
+    
+  moviepy:
+    output_dir: "./output/videos"
+    default_fps: 24
+    default_codec: "libx264"
+  
+  # Audio Processing
+  pydub:
+    output_dir: "./output/audio"
+    default_format: "mp3"
+    
+  librosa:
+    sample_rate: 22050
+    
+  whisper:
+    model: "base"  # Options: tiny, base, small, medium, large
+    output_dir: "./output/captions"
+  
+  # Image Processing
+  pillow:
+    output_dir: "./output/images"
+    default_format: "png"
+    thumbnail_size: [128, 128]
+    
+  opencv:
+    output_dir: "./output/images"
+    face_detection:
+      scale_factor: 1.1
+      min_neighbors: 4
+      
+  rembg:
+    output_dir: "./output/images"
+  
+  # NLP
+  spacy:
+    model: "en_core_web_sm"
+    max_hashtags: 5
+  
+  # Face Analysis
+  deepface:
+    default_model: "VGG-Face"
+    actions:
+      - age
+      - gender
+      - emotion
