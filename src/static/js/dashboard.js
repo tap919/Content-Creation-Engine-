@@ -810,6 +810,37 @@ function updateWizardUI() {
             nextBtn.textContent = 'Next →';
         }
     }
+
+    // Restore form field values from saved wizard data when navigating between steps
+    if (typeof CampaignWizard !== 'undefined' && CampaignWizard.data) {
+        switch (CampaignWizard.currentStep) {
+            case 1:
+                // Restore campaign basic information (e.g., name)
+                {
+                    const nameInput = document.getElementById('campaign-name-input');
+                    if (nameInput && typeof CampaignWizard.data.name !== 'undefined') {
+                        nameInput.value = CampaignWizard.data.name;
+                    }
+                }
+                break;
+            case 2:
+                // Restore platform selections from CampaignWizard.data.platforms
+                {
+                    if (Array.isArray(CampaignWizard.data.platforms)) {
+                        const platformInputs = document.querySelectorAll('input[name="campaign-platform"]');
+                        platformInputs.forEach(function (input) {
+                            if (input && typeof input.value !== 'undefined') {
+                                input.checked = CampaignWizard.data.platforms.indexOf(input.value) !== -1;
+                            }
+                        });
+                    }
+                }
+                break;
+            default:
+                // Additional steps can restore their fields here as needed
+                break;
+        }
+    }
 }
 
 // Create campaign from wizard data
