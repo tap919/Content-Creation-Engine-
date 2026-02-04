@@ -4,7 +4,7 @@ import pytest
 import numpy as np
 
 from src.evolution.models import (
-    EngagementMetrics, FitnessScore, BrandParameters, EvolutionConfig
+    EngagementMetrics, FitnessScore, BrandParameters
 )
 from src.evolution.evolution import EvolutionaryLoop
 from src.utils.config import Config
