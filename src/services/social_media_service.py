@@ -21,8 +21,7 @@ logger = structlog.get_logger(__name__)
 
 # gRPC imports (optional, gracefully handle if not installed)
 try:
-    import grpc  # noqa: F401 - imported for availability check
-    from grpc import aio  # noqa: F401 - will be used when gRPC server is implemented
+    from grpc import aio
 
     GRPC_AVAILABLE = True
 except ImportError:
@@ -559,11 +558,9 @@ async def serve(port: int = 50055) -> None:
 
     logger.info("Starting Social Media Service", port=port)
 
-    # Create service instance
-    servicer = SocialMediaServicer()
-
-    # In production, this would register with the gRPC server using the generated
-    # gRPC bindings, for example:
+    # In production, this would create a service instance and register it with the
+    # gRPC server using the generated gRPC bindings, for example:
+    #   servicer = SocialMediaServicer()
     #   social_media_pb2_grpc.add_SocialMediaServiceServicer_to_server(servicer, server)
 
     # Set up and start the gRPC server

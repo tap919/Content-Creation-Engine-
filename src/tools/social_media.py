@@ -374,10 +374,11 @@ class FacebookPlatform(SocialMediaPlatform):
 
     async def post(
         self,
-        message: str,
+        message: Optional[str] = None,
         media_url: Optional[str] = None,
         link: Optional[str] = None,
         published: bool = True,
+        **kwargs
     ) -> dict:
         """
         Post to Facebook page.
@@ -393,7 +394,7 @@ class FacebookPlatform(SocialMediaPlatform):
         """
         logger.info(
             "FacebookPlatform posting",
-            message_length=len(message),
+            message_length=len(message) if message else 0,
             has_media=media_url is not None,
         )
         # Placeholder - in production, use Facebook Graph API:
@@ -448,9 +449,10 @@ class LinkedInPlatform(SocialMediaPlatform):
 
     async def post(
         self,
-        commentary: str,
+        commentary: Optional[str] = None,
         media_url: Optional[str] = None,
         visibility: str = "PUBLIC",
+        **kwargs
     ) -> dict:
         """
         Post to LinkedIn.
@@ -465,7 +467,7 @@ class LinkedInPlatform(SocialMediaPlatform):
         """
         logger.info(
             "LinkedInPlatform posting",
-            commentary_length=len(commentary),
+            commentary_length=len(commentary) if commentary else 0,
             visibility=visibility,
         )
         # Placeholder - in production, use LinkedIn API:
