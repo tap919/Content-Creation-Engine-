@@ -413,18 +413,18 @@ class BabyCapCut:
             if final:
                 try:
                     final.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("Failed to close final video clip", error=str(e))
             if video:
                 try:
                     video.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("Failed to close video clip", error=str(e))
             if background_music:
                 try:
                     background_music.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("Failed to close background music clip", error=str(e))
     
     def speed_up_video(
         self,
