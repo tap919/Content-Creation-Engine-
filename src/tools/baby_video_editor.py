@@ -201,17 +201,17 @@ class BabyCapCut:
             for clip in txt_clips:
                 try:
                     clip.close()
-                except:
+                except Exception:
                     pass
             if final:
                 try:
                     final.close()
-                except:
+                except Exception:
                     pass
             if video:
                 try:
                     video.close()
-                except:
+                except Exception:
                     pass
     
     def resize_for_platform(
@@ -329,12 +329,12 @@ class BabyCapCut:
             if final:
                 try:
                     final.close()
-                except:
+                except Exception:
                     pass
             for clip in clips:
                 try:
                     clip.close()
-                except:
+                except Exception:
                     pass
     
     def add_background_music(
@@ -413,17 +413,17 @@ class BabyCapCut:
             if final:
                 try:
                     final.close()
-                except:
+                except Exception:
                     pass
             if video:
                 try:
                     video.close()
-                except:
+                except Exception:
                     pass
             if background_music:
                 try:
                     background_music.close()
-                except:
+                except Exception:
                     pass
     
     def speed_up_video(
