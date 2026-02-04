@@ -11,12 +11,12 @@ const DashboardState = {
         email: 'user@example.com'
     },
     settings: {
-        apiKeys: {},
         connections: {},
         preferences: {}
     },
     contentQueue: [],
-    uploadProgress: 0
+    uploadProgress: 0,
+    activeUploads: 0
 };
 
 // API Base URL
@@ -49,7 +49,7 @@ function initializeNavigation() {
     const menuToggle = document.querySelector('.menu-toggle');
     const sidebar = document.querySelector('.sidebar');
     
-    if (menuToggle) {
+    if (menuToggle && sidebar) {
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
         });
@@ -148,6 +148,9 @@ async function handleFileUpload(files) {
         progressContainer.classList.remove('hidden');
     }
     
+    // Track active uploads to prevent race conditions
+    DashboardState.activeUploads++;
+    
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         
@@ -172,16 +175,24 @@ async function handleFileUpload(files) {
         }
     }
     
-    // Reset progress
-    setTimeout(() => {
-        if (progressContainer) {
-            progressContainer.classList.add('hidden');
-        }
-        if (progressFill) {
-            progressFill.style.width = '0%';
-        }
-    }, 2000);
+    // Decrement active uploads counter
+    DashboardState.activeUploads--;
+    
+    // Only hide progress when all uploads are complete
+    if (DashboardState.activeUploads === 0) {
+        setTimeout(() => {
+            if (progressContainer && DashboardState.activeUploads === 0) {
+                progressContainer.classList.add('hidden');
+            }
+            if (progressFill) {
+                progressFill.style.width = '0%';
+            }
+        }, 2000);
+    }
 }
+
+// Upload timeout constant (5 minutes)
+const UPLOAD_TIMEOUT_MS = 5 * 60 * 1000;
 
 async function uploadFile(file, onProgress) {
     return new Promise((resolve, reject) => {
@@ -206,8 +217,15 @@ async function uploadFile(file, onProgress) {
         });
         
         xhr.addEventListener('error', () => {
-            reject(new Error('Network error'));
+            reject(new Error('Upload failed due to network error. Please check your connection and try again.'));
         });
+        
+        xhr.addEventListener('timeout', () => {
+            reject(new Error('Upload timed out. The file may be too large or the server is taking too long to respond.'));
+        });
+        
+        // Set upload timeout
+        xhr.timeout = UPLOAD_TIMEOUT_MS;
         
         xhr.open('POST', `${API_BASE}/api/upload`);
         xhr.send(formData);
@@ -251,7 +269,7 @@ async function saveApiKeys() {
         
         if (response.ok) {
             showToast('success', 'Saved', 'API keys saved successfully');
-            DashboardState.settings.apiKeys = apiKeys;
+            // Don't store API keys in client-side state for security
         } else {
             throw new Error('Failed to save API keys');
         }
@@ -355,18 +373,45 @@ async function loadContentList() {
         { id: 3, name: 'Social Media Post', type: 'image', status: 'queued', date: 'Just now' }
     ];
     
-    contentList.innerHTML = items.map(item => `
-        <div class="content-item" data-id="${item.id}">
-            <div class="content-thumbnail">
-                ${getFileIcon(item.type)}
-            </div>
-            <div class="content-info">
-                <div class="content-name">${item.name}</div>
-                <div class="content-meta">${item.date}</div>
-            </div>
-            <span class="content-status ${item.status}">${capitalizeFirst(item.status)}</span>
-        </div>
-    `).join('');
+    // Clear existing content
+    contentList.innerHTML = '';
+
+    // Safely build DOM elements to avoid XSS when items come from backend
+    items.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.classList.add('content-item');
+        itemEl.dataset.id = String(item.id);
+
+        const thumbnailEl = document.createElement('div');
+        thumbnailEl.classList.add('content-thumbnail');
+        // getFileIcon returns trusted emoji content
+        thumbnailEl.textContent = getFileIcon(item.type);
+
+        const infoEl = document.createElement('div');
+        infoEl.classList.add('content-info');
+
+        const nameEl = document.createElement('div');
+        nameEl.classList.add('content-name');
+        nameEl.textContent = item.name;
+
+        const metaEl = document.createElement('div');
+        metaEl.classList.add('content-meta');
+        metaEl.textContent = item.date;
+
+        infoEl.appendChild(nameEl);
+        infoEl.appendChild(metaEl);
+
+        const statusEl = document.createElement('span');
+        statusEl.classList.add('content-status');
+        statusEl.classList.add(item.status);
+        statusEl.textContent = capitalizeFirst(item.status);
+
+        itemEl.appendChild(thumbnailEl);
+        itemEl.appendChild(infoEl);
+        itemEl.appendChild(statusEl);
+
+        contentList.appendChild(itemEl);
+    });
 }
 
 async function loadSettingsData() {
@@ -436,14 +481,36 @@ function showToast(type, title, message) {
     
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.innerHTML = `
-        <span class="toast-icon ${type}">${icons[type]}</span>
-        <div class="toast-content">
-            <div class="toast-title">${title}</div>
-            <div class="toast-message">${message}</div>
-        </div>
-        <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
-    `;
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'toast-icon ' + type;
+    iconSpan.textContent = icons[type] || '';
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'toast-content';
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'toast-title';
+    titleDiv.textContent = title != null ? title : '';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'toast-message';
+    messageDiv.textContent = message != null ? message : '';
+
+    contentDiv.appendChild(titleDiv);
+    contentDiv.appendChild(messageDiv);
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'toast-close';
+    closeButton.type = 'button';
+    closeButton.textContent = '✕';
+    closeButton.addEventListener('click', () => {
+        toast.remove();
+    });
+
+    toast.appendChild(iconSpan);
+    toast.appendChild(contentDiv);
+    toast.appendChild(closeButton);
     
     container.appendChild(toast);
     
@@ -563,6 +630,31 @@ function formatDate(date) {
     });
 }
 
+// Settings Tab Function (moved from inline script)
+function showSettingsTab(tab, e) {
+    const settingsPage = document.getElementById('page-settings');
+    if (!settingsPage) {
+        return;
+    }
+
+    // Update active tab styling
+    settingsPage.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    // Prefer currentTarget (the element with the event listener) over target
+    const tabElement = (e && e.currentTarget && e.currentTarget.classList && e.currentTarget.classList.contains('tab'))
+        ? e.currentTarget
+        : (e && e.target && e.target.classList && e.target.classList.contains('tab'))
+            ? e.target
+            : null;
+
+    if (tabElement) {
+        tabElement.classList.add('active');
+    }
+    
+    // Note: In the current grid layout, all settings sections are always visible
+    // This function updates only the active tab styling for visual feedback
+}
+
 // Export for global access
 window.Dashboard = {
     navigateTo,
@@ -570,5 +662,6 @@ window.Dashboard = {
     triggerEvolution,
     openModal,
     closeModal,
-    showToast
+    showToast,
+    showSettingsTab
 };

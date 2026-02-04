@@ -23,9 +23,9 @@
                 </div>
             </div>
             
-            <nav class="nav-section">
+            <nav class="nav-section" role="navigation" aria-label="Main navigation">
                 <div class="nav-title">Main Menu</div>
-                <a class="nav-item active" data-page="dashboard">
+                <a class="nav-item active" data-page="dashboard" aria-current="page">
                     <span class="nav-icon">📊</span>
                     <span class="nav-label">Dashboard</span>
                 </a>
@@ -254,12 +254,16 @@
                         </div>
                         
                         <!-- File Upload Zone -->
-                        <div class="upload-zone">
+                        <div class="upload-zone" role="button" tabindex="0"
+                             onclick="this.querySelector('.upload-input').click();"
+                             onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.querySelector('.upload-input').click(); }">
                             <input type="file" class="upload-input" multiple 
-                                accept=".mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.png,.jpg,.jpeg,.gif,.webp,.pdf,.txt,.doc,.docx,.csv,.json">
+                                accept=".mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.png,.jpg,.jpeg,.gif,.webp,.pdf,.txt,.doc,.docx,.csv,.json"
+                                aria-label="Upload files"
+                                aria-describedby="upload-subtitle">
                             <div class="upload-icon">📤</div>
                             <h3 class="upload-title">Drop files here or click to upload</h3>
-                            <p class="upload-subtitle">Support for multiple file types</p>
+                            <p class="upload-subtitle" id="upload-subtitle">Support for multiple file types</p>
                             <div class="upload-formats">
                                 <span class="format-badge">Video</span>
                                 <span class="format-badge">Audio</span>
@@ -431,10 +435,9 @@
                 <!-- Settings Page -->
                 <div id="page-settings" class="page-content hidden">
                     <div class="tabs">
-                        <button class="tab active" onclick="showSettingsTab('api', event)">API Keys</button>
-                        <button class="tab" onclick="showSettingsTab('connections', event)">Connections</button>
-                        <button class="tab" onclick="showSettingsTab('integrations', event)">Integrations</button>
-                        <button class="tab" onclick="showSettingsTab('preferences', event)">Preferences</button>
+                        <button class="tab active" onclick="Dashboard.showSettingsTab('api', event)">API Keys</button>
+                        <button class="tab" onclick="Dashboard.showSettingsTab('connections', event)">Connections</button>
+                        <button class="tab" onclick="Dashboard.showSettingsTab('preferences', event)">Preferences</button>
                     </div>
                     
                     <div class="settings-grid">
@@ -755,63 +758,5 @@
     <div class="toast-container"></div>
     
     <script src="/static/js/dashboard.js"></script>
-    <script>
-        function showSettingsTab(tab, e) {
-            const settingsPage = document.getElementById('page-settings');
-            if (!settingsPage) {
-                // If the settings page is not present, do nothing.
-                return;
-            }
-
-            // Update active tab styling
-            settingsPage.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-            // Prefer currentTarget (the element with the event listener) over target
-            const tabElement = (e && e.currentTarget && e.currentTarget.classList && e.currentTarget.classList.contains('tab'))
-                ? e.currentTarget
-                : (e && e.target && e.target.classList && e.target.classList.contains('tab'))
-                    ? e.target
-                    : null;
-
-            if (tabElement) {
-                tabElement.classList.add('active');
-            }
-
-            // Hide all settings content sections
-            const allSections = settingsPage.querySelectorAll(
-                '[data-settings-section], .settings-section, .settings-content'
-            );
-            allSections.forEach(section => {
-                section.classList.add('hidden');
-            });
-
-            // Determine the section to show based on the tab key
-            let activeSection = settingsPage.querySelector('[data-settings-section="' + tab + '"]');
-
-            if (!activeSection) {
-                // Fallback to ID convention: #settings-<tab>
-                activeSection = settingsPage.querySelector('#settings-' + tab);
-            }
-
-            if (!activeSection && allSections.length === 4) {
-                // As a final fallback, map known tab keys to section indices
-                const indexMap = {
-                    'api-keys': 0,
-                    'connections': 1,
-                    'integrations': 2,
-                    'preferences': 3
-                };
-                const idx = indexMap[tab];
-                if (typeof idx === 'number' && allSections[idx]) {
-                    activeSection = allSections[idx];
-                }
-            }
-
-            // Show the selected section, if we found one
-            if (activeSection) {
-                activeSection.classList.remove('hidden');
-            }
-        }
-    </script>
 </body>
 </html>

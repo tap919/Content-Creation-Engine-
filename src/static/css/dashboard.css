@@ -828,6 +828,11 @@ body::before {
     background: var(--bg-primary);
 }
 
+.toggle input:focus + .toggle-slider {
+    outline: 2px solid var(--accent-yellow);
+    outline-offset: 2px;
+}
+
 /* Connection Cards */
 .connection-card {
     display: flex;
