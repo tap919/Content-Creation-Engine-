@@ -35,3 +35,86 @@ llm_model: "gpt-4"
 # Production settings
 max_image_variations: 5
 target_video_duration: 15
+
+# ============================================
+# Polyglot Architecture Settings
+# ============================================
+# Configuration for the multi-language service architecture:
+#   - Go API Gateway (REST/WebSocket)
+#   - Python AI Services (gRPC)
+#   - Rust Client (Tauri Desktop App)
+
+# Service Communication
+services:
+  # gRPC settings for Python services
+  grpc:
+    enabled: true
+    port: 50051
+    max_workers: 10
+    max_message_length: 104857600  # 100MB for video content
+  
+  # Video service (FLUX.1, Sora, Veo, Runway)
+  video_service:
+    host: "localhost"
+    port: 50052
+    providers:
+      - flux1
+      - sora
+      - veo
+      - runway
+  
+  # Audio service (MusicGen, ElevenLabs, Azure Speech, Amazon Polly)
+  audio_service:
+    host: "localhost"
+    port: 50053
+    providers:
+      - musicgen
+      - elevenlabs
+      - azure_speech
+      - amazon_polly
+  
+  # Avatar service (D-ID, Tavus)
+  avatar_service:
+    host: "localhost"
+    port: 50054
+    providers:
+      - d_id
+      - tavus
+
+# API Gateway settings (Go)
+gateway:
+  host: "0.0.0.0"
+  rest_port: 8080
+  websocket_port: 8081
+  
+  # Rate limiting
+  rate_limit:
+    enabled: true
+    requests_per_minute: 60
+    burst_size: 10
+  
+  # Authentication
+  auth:
+    enabled: false  # Enable in production
+    jwt_expiry_hours: 24
+  
+  # CORS settings
+  cors:
+    allowed_origins:
+      - "http://localhost:3000"
+      - "http://localhost:8080"
+      - "tauri://localhost"
+    allowed_methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+    allowed_headers:
+      - Authorization
+      - Content-Type
+
+# Workflow orchestration (Prefect/Luigi compatible)
+workflow:
+  engine: "internal"  # Options: internal, prefect, luigi
+  max_concurrent_jobs: 5
+  job_timeout_seconds: 300

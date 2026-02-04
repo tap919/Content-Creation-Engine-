@@ -1,19 +1,92 @@
 # Agentic Content Factory - Docker Compose
-# Full stack deployment with all services
+# Full stack deployment with polyglot architecture:
+#   - Go API Gateway (REST/WebSocket) - External interface
+#   - Python AI Services (gRPC) - AI workflow orchestration
+#   - Rust Client (Tauri) - Desktop application (separate build)
+#
+# Communication flow: Rust Client -> Go Gateway -> Python Services -> AI APIs
+#
+# ============================================
+# Docker Compose Profiles
+# ============================================
+# This configuration uses Docker Compose profiles to organize services:
+#
+# Default (no profile): orchestrator, worker, redis, db
+#   docker-compose up
+#
+# With gateway profile: Adds Go API Gateway
+#   docker-compose --profile gateway up
+#
+# With services profile: Adds video-service and audio-service
+#   docker-compose --profile services up
+#
+# Full stack with all profiles:
+#   docker-compose --profile gateway --profile services up
+#
+# With automation (n8n):
+#   docker-compose --profile automation up
+#
+# BREAKING CHANGE: The Docker service previously named "api" has been renamed
+# to "orchestrator". Update any existing scripts or commands accordingly.
+#
+# NOTE: The gateway service depends on orchestrator (which runs by default).
+# The video-service and audio-service require the "services" profile to be
+# explicitly enabled. If running the gateway, you may also want to enable
+# the services profile for full functionality.
+# ============================================
 
 services:
-  # Main API Server
-  api:
+  # ============================================
+  # Go API Gateway & Control Layer
+  # ============================================
+  # Handles REST/WebSocket API, authentication, rate limiting,
+  # and routes requests to Python services via gRPC
+  gateway:
+    build:
+      context: ./go-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"           # REST API
+      - "8081:8081"           # WebSocket for real-time updates
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - PYTHON_ORCHESTRATOR_ADDR=orchestrator:50051
+      - PYTHON_VIDEO_SERVICE_ADDR=video-service:50052
+      - PYTHON_AUDIO_SERVICE_ADDR=audio-service:50053
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=${JWT_SECRET?JWT_SECRET is required. Set with: export JWT_SECRET=your-secret or add to .env file}
+    depends_on:
+      - redis
+      - orchestrator
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - gateway
+
+  # ============================================
+  # Python AI Services Layer
+  # ============================================
+  
+  # Content Orchestrator - Main workflow coordinator
+  orchestrator:
     build:
       context: .
       target: production
     ports:
-      - "8000:8000"
+      - "50051:50051"         # gRPC port
+      - "8000:8000"           # REST API (legacy/direct access)
     environment:
       - ENVIRONMENT=production
       - LOG_LEVEL=INFO
+      - GRPC_PORT=50051
       - REDIS_URL=redis://redis:6379/0
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/content_factory
+      - VIDEO_SERVICE_ADDR=video-service:50052
+      - AUDIO_SERVICE_ADDR=audio-service:50053
     env_file:
       - .env
     depends_on:
@@ -26,6 +99,50 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # Video Service - Handles FLUX.1, Sora, Veo integrations
+  video-service:
+    build:
+      context: .
+      target: production
+    command: ["python", "-m", "src.services.video_service", "--port", "50052"]
+    ports:
+      - "50052:50052"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - GRPC_PORT=50052
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    volumes:
+      - ./output:/app/output
+    profiles:
+      - services
+
+  # Audio Service - Handles MusicGen, ElevenLabs, Azure Speech
+  audio-service:
+    build:
+      context: .
+      target: production
+    command: ["python", "-m", "src.services.audio_service", "--port", "50053"]
+    ports:
+      - "50053:50053"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - GRPC_PORT=50053
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    volumes:
+      - ./output:/app/output
+    profiles:
+      - services
 
   # Background Worker (for content generation)
   worker:

@@ -1,0 +1,244 @@
+// Content Factory Service Definitions
+// 
+// gRPC Protocol Buffer definitions for communication between
+// Go API Gateway and Python AI Services.
+// 
+// Architecture: Go Gateway -> gRPC -> Python Services -> External AI APIs
+//
+// Requires protobuf >= 3.15 for proto3 optional field support.
+// Generate Python code with:
+//   python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. protos/content_factory.proto
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package content_factory;
+
+option go_package = "github.com/content-factory/go-gateway/protos/content_factory";
+
+// ============================================
+// Common Types
+// ============================================
+
+message Empty {}
+
+// ============================================
+// Video Service
+// ============================================
+
+service VideoService {
+  // Generate a video from creative brief
+  rpc Render(VideoRenderRequest) returns (VideoRenderResponse);
+  
+  // Check the status of a video render job
+  rpc GetJobStatus(JobStatusRequest) returns (JobStatusResponse);
+  
+  // Cancel a pending video render job
+  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse);
+}
+
+message VideoRenderRequest {
+  string brief_id = 1;
+  string prompt = 2;
+  string style = 3;
+  
+  // Video parameters
+  int32 duration_seconds = 4;
+  int32 width = 5;
+  int32 height = 6;
+  
+  // Brand alignment
+  string brand_aesthetic = 7;
+  repeated string target_platforms = 8;
+  
+  // Music parameters for the video
+  MusicParameters music_params = 9;
+}
+
+message VideoRenderResponse {
+  string job_id = 1;
+  string status = 2;  // queued, processing, completed, failed
+  string video_url = 3;
+  string thumbnail_url = 4;
+  float quality_score = 5;
+  int32 processing_time_ms = 6;
+}
+
+// ============================================
+// Audio Service
+// ============================================
+
+service AudioService {
+  // Generate background music track
+  rpc GenerateMusic(MusicGenerationRequest) returns (MusicGenerationResponse);
+  
+  // Generate text-to-speech voiceover
+  rpc GenerateVoiceover(VoiceoverRequest) returns (VoiceoverResponse);
+  
+  // Get job status
+  rpc GetJobStatus(JobStatusRequest) returns (JobStatusResponse);
+}
+
+message MusicParameters {
+  float tempo = 1;
+  string key = 2;
+  string mood = 3;
+  float energy = 4;
+  float danceability = 5;
+}
+
+message MusicGenerationRequest {
+  string brief_id = 1;
+  MusicParameters params = 2;
+  int32 duration_seconds = 3;
+  string output_format = 4;  // wav, mp3, etc.
+}
+
+message MusicGenerationResponse {
+  string job_id = 1;
+  string status = 2;
+  string audio_url = 3;
+  float quality_score = 4;
+  int32 duration_ms = 5;
+}
+
+message VoiceoverRequest {
+  string text = 1;
+  string voice = 2;
+  string model = 3;
+  float speed = 4;
+}
+
+message VoiceoverResponse {
+  string job_id = 1;
+  string status = 2;
+  string audio_url = 3;
+  int32 duration_ms = 4;
+}
+
+// ============================================
+// Avatar Service
+// ============================================
+
+service AvatarService {
+  // Generate avatar video from audio and image
+  rpc GenerateAvatar(AvatarGenerationRequest) returns (AvatarGenerationResponse);
+  
+  // Get job status
+  rpc GetJobStatus(JobStatusRequest) returns (JobStatusResponse);
+}
+
+message AvatarGenerationRequest {
+  string audio_url = 1;
+  string image_url = 2;
+  string avatar_style = 3;
+  bool include_gestures = 4;
+}
+
+message AvatarGenerationResponse {
+  string job_id = 1;
+  string status = 2;
+  string video_url = 3;
+  float lip_sync_score = 4;
+}
+
+// ============================================
+// Content Orchestrator Service
+// ============================================
+
+service ContentOrchestrator {
+  // Execute full content creation pipeline
+  rpc CreateContent(ContentCreationRequest) returns (ContentCreationResponse);
+  
+  // Stream progress updates
+  rpc StreamProgress(JobStatusRequest) returns (stream ProgressUpdate);
+  
+  // Get current brand parameters
+  rpc GetBrandParameters(Empty) returns (BrandParametersResponse);
+  
+  // Trigger evolution cycle
+  rpc TriggerEvolution(EvolutionRequest) returns (EvolutionResponse);
+}
+
+message ContentCreationRequest {
+  string topic = 1;
+  bool force_generation = 2;
+  repeated string target_platforms = 3;
+  BrandParametersOverride brand_override = 4;
+}
+
+message BrandParametersOverride {
+  optional float music_tempo = 1;
+  optional float music_energy = 2;
+  optional float jargon_level = 3;
+}
+
+message ContentCreationResponse {
+  string content_id = 1;
+  string status = 2;
+  string topic = 3;
+  string video_url = 4;
+  string thumbnail_url = 5;
+  
+  // Quality metrics
+  float overall_quality_score = 6;
+  float brand_alignment_score = 7;
+  int32 total_processing_time_ms = 8;
+}
+
+message ProgressUpdate {
+  string content_id = 1;
+  string stage = 2;  // trend_detection, brief_generation, image_generation, audio_generation, video_assembly
+  float progress_percent = 3;
+  string message = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+message BrandParametersResponse {
+  int32 generation = 1;
+  float music_tempo = 2;
+  float music_energy = 3;
+  float music_danceability = 4;
+  float text_jargon_level = 5;
+  float text_length_preference = 6;
+  float visual_contrast = 7;
+  float visual_saturation = 8;
+  float fitness_average = 9;
+}
+
+message EvolutionRequest {
+  repeated string content_ids = 1;
+}
+
+message EvolutionResponse {
+  string status = 1;
+  int32 new_generation = 2;
+  BrandParametersResponse new_parameters = 3;
+}
+
+// ============================================
+// Common Job Management
+// ============================================
+
+message JobStatusRequest {
+  string job_id = 1;
+}
+
+message JobStatusResponse {
+  string job_id = 1;
+  string status = 2;  // queued, processing, completed, failed
+  float progress_percent = 3;
+  string error_message = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message CancelJobRequest {
+  string job_id = 1;
+}
+
+message CancelJobResponse {
+  bool success = 1;
+  string message = 2;
+}
