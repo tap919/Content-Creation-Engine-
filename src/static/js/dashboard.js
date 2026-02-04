@@ -933,13 +933,19 @@ async function loadCampaignsList() {
 // Initialize platform selector interactions
 function initializePlatformSelector() {
     document.querySelectorAll('.platform-option').forEach(option => {
-        option.addEventListener('click', () => {
+        option.addEventListener('click', (e) => {
+            // Only toggle selected class - let native checkbox behavior handle the checked state
+            // The label element wraps the checkbox, so clicking anywhere toggles it automatically
             option.classList.toggle('selected');
-            const checkbox = option.querySelector('input[type="checkbox"]');
-            if (checkbox) {
-                checkbox.checked = !checkbox.checked;
-            }
         });
+        
+        // Sync selected class with checkbox state on page load and checkbox change
+        const checkbox = option.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+            checkbox.addEventListener('change', () => {
+                option.classList.toggle('selected', checkbox.checked);
+            });
+        }
     });
 }
 
