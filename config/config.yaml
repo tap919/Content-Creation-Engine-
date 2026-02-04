@@ -1,0 +1,37 @@
+# Agentic Content Factory Configuration
+
+# General settings
+app_name: "Agentic Content Factory"
+environment: "development"
+debug: true
+
+# Output directories
+output_dir: "./output"
+
+# Brand settings
+brand_aesthetic: "Code of the Streets"
+brand_name: "Bio-Hacker Update"
+
+# Content cycle settings (in seconds)
+cycle_interval_seconds: 3600  # 1 hour
+
+# Trend sources to monitor
+trend_sources:
+  - biotech_news
+  - pubmed
+  - twitter
+  - reddit_biotech
+
+# Deployment platforms
+deployment_platforms:
+  - instagram
+  - tiktok
+  - youtube_shorts
+
+# Model settings
+embedding_model: "all-MiniLM-L6-v2"
+llm_model: "gpt-4"
+
+# Production settings
+max_image_variations: 5
+target_video_duration: 15
