@@ -256,6 +256,17 @@ class FFmpegTool:
             True if successful, False otherwise
         """
         try:
+            # Map common audio formats to their FFmpeg codec names
+            codec_map = {
+                "mp3": "libmp3lame",
+                "aac": "aac",
+                "wav": "pcm_s16le",
+                "ogg": "libvorbis",
+                "flac": "flac",
+                "copy": "copy",
+            }
+            codec = codec_map.get(audio_format, audio_format)
+
             cmd = [
                 self.ffmpeg_path,
                 "-y",
@@ -263,7 +274,7 @@ class FFmpegTool:
                 video_path,
                 "-vn",
                 "-acodec",
-                audio_format if audio_format == "copy" else f"lib{audio_format}",
+                codec,
                 output_path,
             ]
             result = subprocess.run(cmd, capture_output=True, text=True)

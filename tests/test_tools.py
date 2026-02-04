@@ -187,7 +187,8 @@ class TestWhisperTool:
         assert tool._format_srt_time(0) == "00:00:00,000"
         assert tool._format_srt_time(1.5) == "00:00:01,500"
         assert tool._format_srt_time(61.25) == "00:01:01,250"
-        assert tool._format_srt_time(3661.999) == "01:01:01,999"
+        # Test hour-range timestamp with exact integer value
+        assert tool._format_srt_time(3662.0) == "01:01:02,000"
 
 
 class TestPillowTool:
