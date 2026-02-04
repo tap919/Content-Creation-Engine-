@@ -13,7 +13,6 @@ This service exposes a gRPC interface for the Go API Gateway.
 import argparse
 import asyncio
 import uuid
-from concurrent import futures
 from pathlib import Path
 from typing import Optional
 
