@@ -265,15 +265,21 @@ async def serve(port: int = 50052) -> None:
     # Create service instance
     servicer = VideoServicer()
 
-    # In production, this would register with the gRPC server
-    # For now, we'll just keep the service running
-    logger.info("Video Service ready", port=port)
+    # Create the async gRPC server
+    server = aio.server()
 
-    # Keep the service running
-    while True:
-        await asyncio.sleep(3600)
+    # In production, this would register the servicer with the gRPC server,
+    # e.g., via generated code like:
+    # video_service_pb2_grpc.add_VideoServicer_to_server(servicer, server)
 
+    # Bind the server to the specified port
+    server.add_insecure_port(f"[::]:{port}")
 
+    # Start the server and wait for it to be terminated
+    await server.start()
+    logger.info("Video Service ready and serving", port=port)
+
+    await server.wait_for_termination()
 def main():
     """Main entry point for video service."""
     parser = argparse.ArgumentParser(description="Video Service gRPC Server")
