@@ -289,10 +289,11 @@ for i, clip in enumerate(clips):
     
     clips[i] = final
 
-# 3. Create thumbnail
+# 3. Create thumbnail (use a proper image file as background)
 thumbnail = canva.create_thumbnail(
-    title='Amazing Podcast Highlights',
-    background_image=clips[0]
+    title='Amazing Podcast Highlights'
+    # Note: background_image expects an image file, not a video file
+    # To use video frame, first extract a frame with FFmpeg or similar
 )
 
 # 4. Track analytics

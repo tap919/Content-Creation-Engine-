@@ -80,8 +80,23 @@ class BabyOpusClip:
     
     @property
     def available(self) -> bool:
-        """Check if core functionality is available."""
-        return WHISPER_AVAILABLE or SCENEDETECT_AVAILABLE
+        """
+        Check if core highlight/transcription functionality is available.
+        
+        Core features (e.g., highlight extraction and engaging-moment detection)
+        require Whisper, so this is True only when Whisper is available.
+        """
+        return WHISPER_AVAILABLE
+    
+    @property
+    def can_detect_scenes(self) -> bool:
+        """Return True if scene detection functionality is available."""
+        return SCENEDETECT_AVAILABLE
+    
+    @property
+    def can_transcribe(self) -> bool:
+        """Return True if transcription functionality is available."""
+        return WHISPER_AVAILABLE
     
     def _load_whisper_model(self):
         """Lazy load Whisper model."""
@@ -115,6 +130,7 @@ class BabyOpusClip:
             logger.error("PySceneDetect not available")
             return None
         
+        video_manager = None
         try:
             video_manager = VideoManager([video_path])
             scene_manager = SceneManager()
@@ -134,14 +150,18 @@ class BabyOpusClip:
                     'duration': (end_time - start_time).get_seconds()
                 })
             
-            video_manager.release()
-            
             logger.info("Scenes detected", video=video_path, count=len(scenes))
             return scenes
             
         except Exception as e:
             logger.error("Scene detection failed", error=str(e))
             return None
+        finally:
+            if video_manager is not None:
+                try:
+                    video_manager.release()
+                except Exception as e:
+                    logger.warning("Failed to release video manager", error=str(e))
     
     def transcribe_video(
         self,
@@ -170,7 +190,7 @@ class BabyOpusClip:
                 '-vn',
                 '-acodec', 'libmp3lame',
                 audio_path
-            ], capture_output=True, text=True)
+            ], capture_output=True, text=True, timeout=300)
             
             if result.returncode != 0:
                 logger.error("Audio extraction failed", stderr=result.stderr)
@@ -336,7 +356,7 @@ class BabyOpusClip:
                     '-c:a', 'aac',
                     '-preset', 'fast',
                     output_path
-                ], capture_output=True, text=True)
+                ], capture_output=True, text=True, timeout=600)
                 
                 if result.returncode != 0:
                     logger.warning("Failed to extract clip", index=i, stderr=result.stderr)
@@ -356,7 +376,6 @@ class BabyOpusClip:
         self,
         clip_paths: List[str],
         output_path: Optional[str] = None,
-        add_titles: bool = True
     ) -> Optional[str]:
         """
         Create a compilation video from multiple clips.
@@ -364,7 +383,6 @@ class BabyOpusClip:
         Args:
             clip_paths: List of clip paths
             output_path: Output video path
-            add_titles: Whether to add title cards between clips
             
         Returns:
             Path to compilation video or None if failed
@@ -382,29 +400,30 @@ class BabyOpusClip:
             # Create concat file for FFmpeg
             concat_file = str(self.output_dir / f"concat_{uuid.uuid4().hex[:8]}.txt")
             
-            with open(concat_file, 'w') as f:
-                for clip_path in clip_paths:
-                    f.write(f"file '{Path(clip_path).absolute()}'\n")
-            
-            # Concatenate using FFmpeg
-            result = subprocess.run([
-                self.ffmpeg_path, '-y',
-                '-f', 'concat',
-                '-safe', '0',
-                '-i', concat_file,
-                '-c', 'copy',
-                output_path
-            ], capture_output=True, text=True)
-            
-            # Clean up concat file
-            Path(concat_file).unlink(missing_ok=True)
-            
-            if result.returncode != 0:
-                logger.error("FFmpeg compilation failed", stderr=result.stderr)
-                return None
-            
-            logger.info("Compilation created", output=output_path, clips=len(clip_paths))
-            return output_path
+            try:
+                with open(concat_file, 'w') as f:
+                    for clip_path in clip_paths:
+                        f.write(f"file '{Path(clip_path).absolute()}'\n")
+                
+                # Concatenate using FFmpeg
+                result = subprocess.run([
+                    self.ffmpeg_path, '-y',
+                    '-f', 'concat',
+                    '-safe', '0',
+                    '-i', concat_file,
+                    '-c', 'copy',
+                    output_path
+                ], capture_output=True, text=True, timeout=600)
+                
+                if result.returncode != 0:
+                    logger.error("FFmpeg compilation failed", stderr=result.stderr)
+                    return None
+                
+                logger.info("Compilation created", output=output_path, clips=len(clip_paths))
+                return output_path
+            finally:
+                # Clean up concat file
+                Path(concat_file).unlink(missing_ok=True)
             
         except Exception as e:
             logger.error("Create compilation failed", error=str(e))
@@ -471,7 +490,7 @@ class BabyOpusClip:
                 '-c:a', 'aac',
                 '-preset', 'fast',
                 output_path
-            ], capture_output=True, text=True)
+            ], capture_output=True, text=True, timeout=600)
             
             if result.returncode != 0:
                 logger.error("Short generation failed", stderr=result.stderr)

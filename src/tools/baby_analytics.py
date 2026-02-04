@@ -11,7 +11,6 @@ Provides basic analytics tracking using SQLite:
 import sqlite3
 import uuid
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Optional, List, Dict, Any
 import structlog
 
@@ -38,7 +37,7 @@ class BabyAnalytics:
             db_path: Path to SQLite database file
         """
         self.db_path = db_path
-        self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.conn = sqlite3.connect(db_path)
         self.conn.row_factory = sqlite3.Row  # Return rows as dicts
         self._create_tables()
     
@@ -146,7 +145,8 @@ class BabyAnalytics:
             ))
             
             # Update or create session
-            self._update_session(session_id, user_id)
+            is_pageview = (event_type == 'pageview')
+            self._update_session(session_id, user_id, is_pageview)
             
             self.conn.commit()
             
@@ -157,17 +157,21 @@ class BabyAnalytics:
             logger.error("Track event failed", error=str(e))
             return False
     
-    def _update_session(self, session_id: str, user_id: Optional[str] = None):
+    def _update_session(self, session_id: str, user_id: Optional[str] = None, is_pageview: bool = False):
         """Update or create session record."""
         cursor = self.conn.cursor()
         
+        # Increment page_views if this is a pageview event
+        pageview_increment = 1 if is_pageview else 0
+        
         cursor.execute('''
             INSERT INTO sessions (session_id, user_id, start_time, last_activity, page_views, events)
-            VALUES (?, ?, ?, ?, 0, 1)
+            VALUES (?, ?, ?, ?, ?, 1)
             ON CONFLICT(session_id) DO UPDATE SET
                 last_activity = ?,
+                page_views = page_views + ?,
                 events = events + 1
-        ''', (session_id, user_id, datetime.now(), datetime.now(), datetime.now()))
+        ''', (session_id, user_id, datetime.now(), datetime.now(), pageview_increment, datetime.now(), pageview_increment))
     
     def track_pageview(
         self,

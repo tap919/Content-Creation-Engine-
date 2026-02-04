@@ -162,8 +162,11 @@ class BabyCanva:
             return None
         
         try:
-            img = Image.open(image_path)
-            draw = ImageDraw.Draw(img)
+            with Image.open(image_path) as img:
+                # Create a copy to work with
+                img_copy = img.copy()
+            
+            draw = ImageDraw.Draw(img_copy)
             
             # Load font
             try:
@@ -179,14 +182,14 @@ class BabyCanva:
             text_width = bbox[2] - bbox[0]
             text_height = bbox[3] - bbox[1]
             
-            x = (img.width - text_width) // 2
+            x = (img_copy.width - text_width) // 2
             
             if position == 'top':
-                y = img.height // 10
+                y = img_copy.height // 10
             elif position == 'bottom':
-                y = img.height - text_height - img.height // 10
+                y = img_copy.height - text_height - img_copy.height // 10
             else:  # center
-                y = (img.height - text_height) // 2
+                y = (img_copy.height - text_height) // 2
             
             # Draw text with shadow
             shadow_offset = 2
@@ -204,7 +207,7 @@ class BabyCanva:
                     self.output_dir / f"text_overlay_{uuid.uuid4().hex[:8]}{ext}"
                 )
             
-            img.save(output_path)
+            img_copy.save(output_path)
             logger.info("Text added to image", input=image_path, output=output_path)
             return output_path
             
@@ -239,11 +242,11 @@ class BabyCanva:
             dimensions = self.DIMENSIONS['youtube_thumbnail']
             
             if background_image:
-                img = Image.open(background_image)
-                img = img.resize(dimensions, Image.Resampling.LANCZOS)
-                # Darken for better text readability
-                enhancer = ImageEnhance.Brightness(img)
-                img = enhancer.enhance(0.6)
+                with Image.open(background_image) as bg_img:
+                    img = bg_img.resize(dimensions, Image.Resampling.LANCZOS)
+                    # Darken for better text readability
+                    enhancer = ImageEnhance.Brightness(img)
+                    img = enhancer.enhance(0.6)
             else:
                 img = Image.new('RGB', dimensions, color=background_color)
             
@@ -326,7 +329,8 @@ class BabyCanva:
             return None
         
         try:
-            img = Image.open(image_path)
+            with Image.open(image_path) as source_img:
+                img = source_img.copy()
             
             if filter_type == 'enhance':
                 # Enhance colors and sharpness
@@ -406,23 +410,24 @@ class BabyCanva:
         
         for img_path in image_paths:
             try:
-                img = Image.open(img_path)
-                
-                # Resize maintaining aspect ratio
-                img.thumbnail(dimensions, Image.Resampling.LANCZOS)
-                
-                # Create new image with exact dimensions and paste resized
-                final_img = Image.new('RGB', dimensions, (0, 0, 0))
-                offset = (
-                    (dimensions[0] - img.width) // 2,
-                    (dimensions[1] - img.height) // 2
-                )
-                final_img.paste(img, offset)
-                
-                filename = Path(img_path).stem
-                output_path = str(Path(output_dir) / f"{filename}_{platform}.jpg")
-                final_img.save(output_path)
-                results.append(output_path)
+                with Image.open(img_path) as source_img:
+                    img = source_img.copy()
+                    
+                    # Resize maintaining aspect ratio
+                    img.thumbnail(dimensions, Image.Resampling.LANCZOS)
+                    
+                    # Create new image with exact dimensions and paste resized
+                    final_img = Image.new('RGB', dimensions, (0, 0, 0))
+                    offset = (
+                        (dimensions[0] - img.width) // 2,
+                        (dimensions[1] - img.height) // 2
+                    )
+                    final_img.paste(img, offset)
+                    
+                    filename = Path(img_path).stem
+                    output_path = str(Path(output_dir) / f"{filename}_{platform}.jpg")
+                    final_img.save(output_path)
+                    results.append(output_path)
                 
             except Exception as e:
                 logger.error("Batch resize failed for image", image=img_path, error=str(e))

@@ -111,7 +111,7 @@ class BabyCapCut:
                 output_path
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg trim failed", stderr=result.stderr)
                 return None
@@ -164,7 +164,7 @@ class BabyCapCut:
                     stroke_color='black',
                     stroke_width=2,
                     method='caption',
-                    size=(video.w * 0.9, None)
+                    size=(int(video.w * 0.9), None)
                 )
                 txt_clip = txt_clip.set_position(('center', 0.8), relative=True)
                 txt_clip = txt_clip.set_start(caption['start'])
@@ -182,11 +182,14 @@ class BabyCapCut:
                     self.output_dir / f"captioned_{uuid.uuid4().hex[:8]}.mp4"
                 )
             
+            # Use unique temp audio file to avoid collisions
+            temp_audio = str(self.output_dir / f"temp-audio-{uuid.uuid4().hex[:8]}.m4a")
+            
             final.write_videofile(
                 output_path,
                 codec='libx264',
                 audio_codec='aac',
-                temp_audiofile='temp-audio.m4a',
+                temp_audiofile=temp_audio,
                 remove_temp=True
             )
             
@@ -257,7 +260,7 @@ class BabyCapCut:
                 output_path
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             if result.returncode != 0:
                 logger.error("FFmpeg resize failed", stderr=result.stderr)
                 return None
@@ -310,10 +313,14 @@ class BabyCapCut:
                     self.output_dir / f"concatenated_{uuid.uuid4().hex[:8]}.mp4"
                 )
             
+            # Use unique temp audio file to avoid collisions
+            temp_audio = str(self.output_dir / f"temp-audio-{uuid.uuid4().hex[:8]}.m4a")
+            
             final.write_videofile(
                 output_path,
                 codec='libx264',
                 audio_codec='aac',
+                temp_audiofile=temp_audio,
                 remove_temp=True
             )
             
@@ -443,6 +450,14 @@ class BabyCapCut:
             Path to output video or None if failed
         """
         try:
+            # Validate speed_factor
+            if speed_factor <= 0:
+                logger.error("Invalid speed_factor", value=speed_factor)
+                return None
+            
+            if speed_factor < 0.1 or speed_factor > 10.0:
+                logger.warning("Speed factor out of recommended range (0.1-10.0)", value=speed_factor)
+            
             if output_path is None:
                 output_path = str(
                     self.output_dir / f"speed_{speed_factor}x_{uuid.uuid4().hex[:8]}.mp4"
@@ -455,6 +470,7 @@ class BabyCapCut:
             # Audio tempo can only be 0.5-2.0, so chain if needed
             audio_filter = self._get_audio_tempo_filter(speed_factor)
             
+            # Try with audio first; if it fails (no audio stream), try video only
             cmd = [
                 self.ffmpeg_path, '-y',
                 '-i', video_path,
@@ -465,7 +481,21 @@ class BabyCapCut:
                 output_path
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            
+            # If it failed due to no audio, try video-only
+            if result.returncode != 0 and ('does not contain any stream' in result.stderr or 
+                                          'matches no streams' in result.stderr):
+                logger.info("No audio stream detected, processing video only")
+                cmd = [
+                    self.ffmpeg_path, '-y',
+                    '-i', video_path,
+                    '-filter:v', f"setpts={pts_value}*PTS",
+                    '-an',  # No audio
+                    output_path
+                ]
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            
             if result.returncode != 0:
                 logger.error("FFmpeg speed change failed", stderr=result.stderr)
                 return None
