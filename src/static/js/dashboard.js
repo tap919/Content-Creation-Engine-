@@ -235,7 +235,9 @@ async function saveApiKeys() {
     const apiKeys = {
         openai: document.querySelector('#openai-key')?.value || '',
         elevenlabs: document.querySelector('#elevenlabs-key')?.value || '',
-        replicate: document.querySelector('#replicate-key')?.value || ''
+        replicate: document.querySelector('#replicate-key')?.value || '',
+        twitter: document.querySelector('#twitter-bearer')?.value || '',
+        youtube: document.querySelector('#youtube-key')?.value || ''
     };
     
     try {
