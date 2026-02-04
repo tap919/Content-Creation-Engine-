@@ -264,7 +264,6 @@ class TestSpacyTool:
 
     def test_spacy_tool_invalid_model_name(self):
         """Test SpacyTool rejects invalid model names."""
-        import pytest
         from src.tools.nlp import SpacyTool
 
         with pytest.raises(ValueError):
