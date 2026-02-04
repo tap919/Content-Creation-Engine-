@@ -559,6 +559,9 @@ class OpenCVTool:
             face = max(faces, key=lambda f: f["width"] * f["height"])
 
             img = cv2.imread(image_path)
+            if img is None:
+                logger.error("Failed to read image with OpenCV", image_path=image_path)
+                return None
             h, w = img.shape[:2]
 
             # Calculate crop region with padding
