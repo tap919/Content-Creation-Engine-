@@ -338,15 +338,25 @@ async def serve(port: int = 50053) -> None:
     # Create service instance
     servicer = AudioServicer()
 
-    # In production, this would register with the gRPC server
-    # For now, we'll just keep the service running
-    logger.info("Audio Service ready", port=port)
+    # In production, this would register with the gRPC server using the generated
+    # gRPC bindings, for example:
+    #   audio_pb2_grpc.add_AudioServiceServicer_to_server(servicer, server)
 
-    # Keep the service running
-    while True:
-        await asyncio.sleep(3600)
+    # Set up and start the gRPC server
+    server = aio.server()
+    server.add_insecure_port(f"[::]:{port}")
 
+    logger.info("Starting gRPC server for Audio Service", port=port)
+    await server.start()
+    logger.info("Audio Service gRPC server started", port=port)
 
+    try:
+        # Wait until the server is terminated (e.g., via signal)
+        await server.wait_for_termination()
+    finally:
+        logger.info("Shutting down Audio Service gRPC server", port=port)
+        # Gracefully stop the server, allowing existing RPCs to finish
+        await server.stop(grace=None)
 def main():
     """Main entry point for audio service."""
     parser = argparse.ArgumentParser(description="Audio Service gRPC Server")
