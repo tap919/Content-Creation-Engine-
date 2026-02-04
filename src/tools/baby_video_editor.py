@@ -397,7 +397,7 @@ class BabyCapCut:
                 output_path,
                 codec='libx264',
                 audio_codec='aac',
-                temp_audiofile='temp-audio.m4a',
+                temp_audiofile=f"temp-audio-{uuid.uuid4().hex}.m4a",
                 remove_temp=True
             )
             
