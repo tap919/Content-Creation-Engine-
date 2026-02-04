@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Content Factory | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <div>
+                        <div class="logo-text">Content Factory</div>
+                        <div class="logo-subtitle">AI-Powered Engine</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="nav-section" role="navigation" aria-label="Main navigation">
+                <div class="nav-title">Main Menu</div>
+                <a class="nav-item active" data-page="dashboard" aria-current="page">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a class="nav-item" data-page="create">
+                    <span class="nav-icon">✨</span>
+                    <span class="nav-label">Create Content</span>
+                    <span class="nav-badge">New</span>
+                </a>
+                <a class="nav-item" data-page="content">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-label">Content Manager</span>
+                </a>
+                <a class="nav-item" data-page="trends">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-label">Trend Analysis</span>
+                </a>
+                <a class="nav-item" data-page="analytics">
+                    <span class="nav-icon">📉</span>
+                    <span class="nav-label">Analytics</span>
+                </a>
+                
+                <div class="nav-title">Production</div>
+                <a class="nav-item" data-page="video">
+                    <span class="nav-icon">🎬</span>
+                    <span class="nav-label">Video Studio</span>
+                </a>
+                <a class="nav-item" data-page="audio">
+                    <span class="nav-icon">🎵</span>
+                    <span class="nav-label">Audio Studio</span>
+                </a>
+                <a class="nav-item" data-page="images">
+                    <span class="nav-icon">🖼️</span>
+                    <span class="nav-label">Image Generator</span>
+                </a>
+                
+                <div class="nav-title">System</div>
+                <a class="nav-item" data-page="automation">
+                    <span class="nav-icon">🤖</span>
+                    <span class="nav-label">Automation</span>
+                </a>
+                <a class="nav-item" data-page="evolution">
+                    <span class="nav-icon">🧬</span>
+                    <span class="nav-label">Evolution Loop</span>
+                </a>
+                <a class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">User</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                    <span>⋮</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-btn menu-toggle" style="display: none;">☰</button>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <span>🔍</span>
+                        <input type="text" placeholder="Search content...">
+                    </div>
+                    <button class="header-btn" title="Notifications">
+                        🔔
+                        <span class="notification-dot"></span>
+                    </button>
+                    <button class="header-btn" title="Help">❓</button>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page-content">
+                    <!-- Stats Grid -->
+                    <div class="dashboard-grid">
+                        <div class="glass-card">
+                            <div class="stat-card">
+                                <div class="stat-icon yellow">📹</div>
+                                <div>
+                                    <div class="stat-value" id="content-count">12</div>
+                                    <div class="stat-label">Contents Created</div>
+                                    <div class="stat-change">+23% this week</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">👁️</div>
+                                <div>
+                                    <div class="stat-value" id="view-count">45.2K</div>
+                                    <div class="stat-label">Total Views</div>
+                                    <div class="stat-change">+15% this week</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="stat-card">
+                                <div class="stat-icon green">💬</div>
+                                <div>
+                                    <div class="stat-value" id="engagement-rate">8.4%</div>
+                                    <div class="stat-label">Engagement Rate</div>
+                                    <div class="stat-change">+2.1% this week</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="stat-card">
+                                <div class="stat-icon orange">🧬</div>
+                                <div>
+                                    <div class="stat-value" id="generation-count">7</div>
+                                    <div class="stat-label">Evolution Cycles</div>
+                                    <div class="stat-change">Optimizing...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions + Recent Activity -->
+                    <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="card-title">Quick Actions</h3>
+                                    <p class="card-subtitle">Start creating content instantly</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <button class="btn btn-primary" id="generate-btn" onclick="Dashboard.generateContent()">
+                                    ⚡ Generate Content
+                                </button>
+                                <button class="btn btn-secondary" onclick="Dashboard.navigateTo('create')">
+                                    ✨ Create Custom Content
+                                </button>
+                                <button class="btn btn-secondary" onclick="Dashboard.triggerEvolution()">
+                                    🧬 Run Evolution Cycle
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Activity</h3>
+                            </div>
+                            <div class="activity-timeline">
+                                <div class="activity-item">
+                                    <div class="activity-time">2 hours ago</div>
+                                    <div class="activity-text">Video "Tech Trends 2024" completed</div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-time">5 hours ago</div>
+                                    <div class="activity-text">Evolution cycle completed - Generation 7</div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-time">Yesterday</div>
+                                    <div class="activity-text">New trend detected: "AI Biotech"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3 class="card-title">System Status</h3>
+                            <span class="system-status healthy">All systems operational</span>
+                        </div>
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="content-item">
+                                <div class="content-thumbnail">🎯</div>
+                                <div class="content-info">
+                                    <div class="content-name">Sentinel Layer</div>
+                                    <div class="content-meta">Trend Detection</div>
+                                </div>
+                                <span class="content-status completed">Active</span>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-thumbnail">🐝</div>
+                                <div class="content-info">
+                                    <div class="content-name">Production Hive</div>
+                                    <div class="content-meta">Content Creation</div>
+                                </div>
+                                <span class="content-status completed">Ready</span>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-thumbnail">🧬</div>
+                                <div class="content-info">
+                                    <div class="content-name">Evolution Loop</div>
+                                    <div class="content-meta">Parameter Optimization</div>
+                                </div>
+                                <span class="content-status completed">Active</span>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-thumbnail">📡</div>
+                                <div class="content-info">
+                                    <div class="content-name">API Gateway</div>
+                                    <div class="content-meta">REST & WebSocket</div>
+                                </div>
+                                <span class="content-status completed">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create Content Page -->
+                <div id="page-create" class="page-content hidden">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Create New Content</h3>
+                                <p class="card-subtitle">Upload files or let AI generate content for you</p>
+                            </div>
+                        </div>
+                        
+                        <!-- File Upload Zone -->
+                        <div class="upload-zone" role="button" tabindex="0"
+                             onclick="this.querySelector('.upload-input').click();"
+                             onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.querySelector('.upload-input').click(); }">
+                            <input type="file" class="upload-input" multiple 
+                                accept=".mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.png,.jpg,.jpeg,.gif,.webp,.pdf,.txt,.doc,.docx,.csv,.json"
+                                aria-label="Upload files"
+                                aria-describedby="upload-subtitle">
+                            <div class="upload-icon">📤</div>
+                            <h3 class="upload-title">Drop files here or click to upload</h3>
+                            <p class="upload-subtitle" id="upload-subtitle">Support for multiple file types</p>
+                            <div class="upload-formats">
+                                <span class="format-badge">Video</span>
+                                <span class="format-badge">Audio</span>
+                                <span class="format-badge">Images</span>
+                                <span class="format-badge">Documents</span>
+                                <span class="format-badge">CSV/JSON</span>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-container hidden">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span class="progress-label">Uploading...</span>
+                                <span class="progress-percent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content Options -->
+                    <div class="dashboard-grid" style="margin-top: 24px;">
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h3 class="card-title">AI-Generated Content</h3>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Content Topic (optional)</label>
+                                <input type="text" class="form-input" id="content-topic" placeholder="Leave empty for trend-based generation">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Content Type</label>
+                                <select class="form-input" id="content-type">
+                                    <option value="auto">Auto (Based on Trends)</option>
+                                    <option value="video">Short Video</option>
+                                    <option value="image">Image Post</option>
+                                    <option value="audio">Audio/Podcast</option>
+                                    <option value="text">Text/Blog</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" onclick="Dashboard.generateContent({topic: document.getElementById('content-topic').value, type: document.getElementById('content-type').value})">
+                                ⚡ Generate with AI
+                            </button>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Supported File Types</h3>
+                            </div>
+                            <div class="content-list">
+                                <div class="content-item">
+                                    <div class="content-thumbnail">🎬</div>
+                                    <div class="content-info">
+                                        <div class="content-name">Video Files</div>
+                                        <div class="content-meta">MP4, MOV, AVI, MKV, WebM</div>
+                                    </div>
+                                </div>
+                                <div class="content-item">
+                                    <div class="content-thumbnail">🎵</div>
+                                    <div class="content-info">
+                                        <div class="content-name">Audio Files</div>
+                                        <div class="content-meta">MP3, WAV, OGG, FLAC</div>
+                                    </div>
+                                </div>
+                                <div class="content-item">
+                                    <div class="content-thumbnail">🖼️</div>
+                                    <div class="content-info">
+                                        <div class="content-name">Image Files</div>
+                                        <div class="content-meta">PNG, JPG, GIF, WebP, SVG</div>
+                                    </div>
+                                </div>
+                                <div class="content-item">
+                                    <div class="content-thumbnail">📄</div>
+                                    <div class="content-info">
+                                        <div class="content-name">Documents</div>
+                                        <div class="content-meta">PDF, TXT, DOC, DOCX</div>
+                                    </div>
+                                </div>
+                                <div class="content-item">
+                                    <div class="content-thumbnail">📊</div>
+                                    <div class="content-info">
+                                        <div class="content-name">Data Files</div>
+                                        <div class="content-meta">CSV, JSON, XML</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Manager Page -->
+                <div id="page-content" class="page-content hidden">
+                    <div class="section-header">
+                        <h2 class="section-title">Your Content</h2>
+                        <button class="btn btn-primary" onclick="Dashboard.navigateTo('create')">
+                            + New Content
+                        </button>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab active">All</button>
+                        <button class="tab">Videos</button>
+                        <button class="tab">Images</button>
+                        <button class="tab">Audio</button>
+                        <button class="tab">Documents</button>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="content-list">
+                            <!-- Content items loaded dynamically -->
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📁</div>
+                                <h3 class="empty-state-title">No content yet</h3>
+                                <p class="empty-state-text">Start by creating or uploading your first content</p>
+                                <button class="btn btn-primary" onclick="Dashboard.navigateTo('create')">Create Content</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Trends Page -->
+                <div id="page-trends" class="page-content hidden">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Trending Topics</h3>
+                            <button class="btn btn-secondary">Refresh Trends</button>
+                        </div>
+                        <div class="content-list">
+                            <div class="content-item">
+                                <div class="content-thumbnail">🔥</div>
+                                <div class="content-info">
+                                    <div class="content-name">AI in Healthcare</div>
+                                    <div class="content-meta">Trending on Twitter, Reddit</div>
+                                </div>
+                                <span class="content-status completed">High Signal</span>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-thumbnail">📈</div>
+                                <div class="content-info">
+                                    <div class="content-name">Biotech Breakthroughs</div>
+                                    <div class="content-meta">PubMed, BioTech News</div>
+                                </div>
+                                <span class="content-status processing">Medium Signal</span>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-thumbnail">🧪</div>
+                                <div class="content-info">
+                                    <div class="content-name">Gene Editing Advances</div>
+                                    <div class="content-meta">Science Forums</div>
+                                </div>
+                                <span class="content-status queued">Emerging</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analytics Page -->
+                <div id="page-analytics" class="page-content hidden">
+                    <div class="dashboard-grid">
+                        <div class="glass-card">
+                            <h3 class="card-title">Performance Overview</h3>
+                            <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                                📊 Analytics charts will appear here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Page -->
+                <div id="page-settings" class="page-content hidden">
+                    <div class="tabs">
+                        <button class="tab active" onclick="Dashboard.showSettingsTab('api', event)">API Keys</button>
+                        <button class="tab" onclick="Dashboard.showSettingsTab('connections', event)">Connections</button>
+                        <button class="tab" onclick="Dashboard.showSettingsTab('preferences', event)">Preferences</button>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <!-- API Keys Section -->
+                        <div class="glass-card" id="settings-api">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="card-title">🔑 API Keys</h3>
+                                    <p class="card-subtitle">Configure your AI service credentials</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">OpenAI API Key</label>
+                                <div class="form-input-icon">
+                                    <span class="icon">🔐</span>
+                                    <input type="password" class="form-input" id="openai-key" placeholder="sk-...">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">ElevenLabs API Key</label>
+                                <div class="form-input-icon">
+                                    <span class="icon">🔐</span>
+                                    <input type="password" class="form-input" id="elevenlabs-key" placeholder="Enter API key">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Replicate API Token</label>
+                                <div class="form-input-icon">
+                                    <span class="icon">🔐</span>
+                                    <input type="password" class="form-input" id="replicate-key" placeholder="r8_...">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Twitter Bearer Token</label>
+                                <div class="form-input-icon">
+                                    <span class="icon">🔐</span>
+                                    <input type="password" class="form-input" id="twitter-bearer" placeholder="Bearer token for trend scraping">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">YouTube API Key</label>
+                                <div class="form-input-icon">
+                                    <span class="icon">🔐</span>
+                                    <input type="password" class="form-input" id="youtube-key" placeholder="AIza...">
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" id="save-api-keys">💾 Save API Keys</button>
+                        </div>
+                        
+                        <!-- Connections Section -->
+                        <div class="glass-card" id="settings-connections">
+                            <div class="card-header">
+                                <div>
+                                    <h3 class="card-title">🔗 Service Connections</h3>
+                                    <p class="card-subtitle">Connect your accounts via OAuth</p>
+                                </div>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">📧</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">Email (Gmail/Outlook)</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="email">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">📅</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">Google Calendar</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="calendar">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">📸</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">Instagram</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="instagram">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">🎵</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">TikTok</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="tiktok">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">▶️</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">YouTube</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="youtube">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">🐦</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">Twitter/X</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="twitter">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">💼</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">LinkedIn</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="linkedin">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">☁️</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">Google Drive</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="gdrive">Connect</button>
+                            </div>
+                            
+                            <div class="connection-card">
+                                <div class="connection-icon">📦</div>
+                                <div class="connection-info">
+                                    <div class="connection-name">Dropbox</div>
+                                    <div class="connection-status">Not connected</div>
+                                </div>
+                                <button class="btn btn-secondary connection-btn connect-btn" data-service="dropbox">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferences -->
+                    <div class="glass-card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">⚙️ Preferences</h3>
+                                <p class="card-subtitle">Customize your experience</p>
+                            </div>
+                        </div>
+                        
+                        <div class="toggle-container">
+                            <div>
+                                <div class="toggle-label">Auto-generate content</div>
+                                <div class="toggle-description">Automatically create content when high-signal trends are detected</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-setting="auto_generate" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="toggle-container">
+                            <div>
+                                <div class="toggle-label">Auto-post content</div>
+                                <div class="toggle-description">Automatically post generated content to connected platforms</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-setting="auto_post">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="toggle-container">
+                            <div>
+                                <div class="toggle-label">Email notifications</div>
+                                <div class="toggle-description">Receive email updates about content performance</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-setting="email_notifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="toggle-container">
+                            <div>
+                                <div class="toggle-label">Evolution mode</div>
+                                <div class="toggle-description">Allow AI to evolve parameters based on engagement</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-setting="evolution_mode" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label">Content Generation Interval</label>
+                            <select class="form-input" id="cycle-interval" data-setting="cycle_interval">
+                                <option value="1800">Every 30 minutes</option>
+                                <option value="3600" selected>Every hour</option>
+                                <option value="7200">Every 2 hours</option>
+                                <option value="21600">Every 6 hours</option>
+                                <option value="86400">Once daily</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Brand Name</label>
+                            <input type="text" class="form-input" id="brand-name" value="Bio-Hacker Update" placeholder="Your brand name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Brand Aesthetic</label>
+                            <input type="text" class="form-input" id="brand-aesthetic" value="Code of the Streets" placeholder="Your brand style">
+                        </div>
+                        
+                        <button class="btn btn-primary">💾 Save Preferences</button>
+                    </div>
+                </div>
+                
+                <!-- Other Pages (Placeholders) -->
+                <div id="page-video" class="page-content hidden">
+                    <div class="glass-card">
+                        <h3 class="card-title">🎬 Video Studio</h3>
+                        <p class="card-subtitle">Advanced video editing and generation tools</p>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🎬</div>
+                            <h3 class="empty-state-title">Video Studio</h3>
+                            <p class="empty-state-text">Create and edit videos with AI assistance</p>
+                            <button class="btn btn-primary">Start Creating</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="page-audio" class="page-content hidden">
+                    <div class="glass-card">
+                        <h3 class="card-title">🎵 Audio Studio</h3>
+                        <p class="card-subtitle">Music generation and audio processing</p>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🎵</div>
+                            <h3 class="empty-state-title">Audio Studio</h3>
+                            <p class="empty-state-text">Generate music and process audio files</p>
+                            <button class="btn btn-primary">Start Creating</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="page-images" class="page-content hidden">
+                    <div class="glass-card">
+                        <h3 class="card-title">🖼️ Image Generator</h3>
+                        <p class="card-subtitle">AI-powered image generation</p>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🖼️</div>
+                            <h3 class="empty-state-title">Image Generator</h3>
+                            <p class="empty-state-text">Create stunning visuals with AI</p>
+                            <button class="btn btn-primary">Start Creating</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="page-automation" class="page-content hidden">
+                    <div class="glass-card">
+                        <h3 class="card-title">🤖 Automation</h3>
+                        <p class="card-subtitle">Manage automated workflows</p>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🤖</div>
+                            <h3 class="empty-state-title">Workflow Automation</h3>
+                            <p class="empty-state-text">Set up automated content pipelines</p>
+                            <button class="btn btn-primary">Create Workflow</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="page-evolution" class="page-content hidden">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3 class="card-title">🧬 Evolution Loop</h3>
+                            <button class="btn btn-secondary" onclick="Dashboard.triggerEvolution()">Run Evolution</button>
+                        </div>
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: 20px;">
+                            <div class="content-item">
+                                <div class="content-info">
+                                    <div class="content-name">Current Generation</div>
+                                    <div class="content-meta" id="evo-generation">7</div>
+                                </div>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-info">
+                                    <div class="content-name">Fitness Average</div>
+                                    <div class="content-meta" id="fitness-avg">0.73</div>
+                                </div>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-info">
+                                    <div class="content-name">Music Tempo</div>
+                                    <div class="content-meta" id="music-tempo">120 BPM</div>
+                                </div>
+                            </div>
+                            <div class="content-item">
+                                <div class="content-info">
+                                    <div class="content-name">Music Energy</div>
+                                    <div class="content-meta" id="music-energy">0.75</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+    
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
