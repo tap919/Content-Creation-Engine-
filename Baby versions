@@ -51,7 +51,12 @@ def create_social_post(text, background_color, output_path):
     img = Image.new('RGB', (1080, 1080), color=background_color)
     draw = ImageDraw.Draw(img)
     
-    font = ImageFont.truetype('Arial.ttf', 60)
+    # Try to load Arial, fallback to default if not available
+    try:
+        font = ImageFont.truetype('Arial.ttf', 60)
+    except OSError:
+        font = ImageFont.load_default()
+    
     draw.text((540, 540), text, font=font, fill='white', anchor='mm')
     
     img.save(output_path)
@@ -215,6 +220,8 @@ class BabyCapCut:
 import whisper
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
+import subprocess
+import os
 
 class BabyDescript:
     """Transcript-based audio/video editing"""
@@ -263,7 +270,12 @@ class BabyDescript:
         """Generate video with burned-in captions"""
         # Extract audio
         audio_path = 'temp_audio.mp3'
-        subprocess.run(['ffmpeg', '-i', video_path, '-vn', audio_path])
+        result = subprocess.run(
+            ['ffmpeg', '-y', '-i', video_path, '-vn', audio_path],
+            capture_output=True
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"Failed to extract audio: {result.stderr}")
         
         # Get captions
         segments = self.transcribe_with_timestamps(audio_path)
@@ -277,12 +289,15 @@ class BabyDescript:
                 f.write(f"{self._format_srt_time(seg['end'])}\n")
                 f.write(f"{seg['text']}\n\n")
         
-        # Burn subtitles into video
-        subprocess.run([
-            'ffmpeg', '-i', video_path, '-vf', 
-            f"subtitles={srt_path}:force_style='FontSize=24,PrimaryColour=&H00FFFF'",
+        # Burn subtitles into video (use absolute path for safety)
+        srt_abs_path = os.path.abspath(srt_path)
+        result = subprocess.run([
+            'ffmpeg', '-y', '-i', video_path, '-vf', 
+            f"subtitles={srt_abs_path}:force_style='FontSize=24,PrimaryColour=&H00FFFF'",
             output_path
-        ])
+        ], capture_output=True)
+        if result.returncode != 0:
+            raise RuntimeError(f"Failed to burn captions: {result.stderr}")
         
         return output_path
     
@@ -339,7 +354,12 @@ class BabyOpusClip:
         """Find most engaging moments based on audio analysis"""
         # Extract audio
         audio_path = 'temp_audio.mp3'
-        subprocess.run(['ffmpeg', '-i', video_path, '-vn', audio_path])
+        result = subprocess.run(
+            ['ffmpeg', '-y', '-i', video_path, '-vn', audio_path],
+            capture_output=True
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"Failed to extract audio: {result.stderr}")
         
         # Transcribe with timestamps
         result = self.whisper_model.transcribe(audio_path)
@@ -380,13 +400,17 @@ class BabyOpusClip:
             start = max(0, moment['start'] - 2)
             duration = min(clip_length, moment['end'] - start + 4)
             
-            subprocess.run([
-                'ffmpeg', '-i', video_path,
+            result = subprocess.run([
+                'ffmpeg', '-y', '-i', video_path,
                 '-ss', str(start),
                 '-t', str(duration),
                 '-c', 'copy',
                 output_path
-            ])
+            ], capture_output=True)
+            
+            if result.returncode != 0:
+                print(f"Warning: Failed to extract clip {i+1}: {result.stderr}")
+                continue
             
             clips.append(output_path)
         
@@ -675,12 +699,20 @@ class BabyMusicStudio:
     """Generate royalty-free background music"""
     
     def __init__(self):
-        self.model = MusicGen.get_pretrained('facebook/musicgen-small')
+        self.model = None  # Lazy load on first use
+    
+    def _load_model(self):
+        """Lazy load the model on first use"""
+        if self.model is None:
+            self.model = MusicGen.get_pretrained('facebook/musicgen-small')
+        return self.model
     
     def generate_background_music(self, prompt, duration=30, output_path='music.wav'):
         """Generate background music from text prompt"""
+        model = self._load_model()
+        
         # Set generation parameters
-        self.model.set_generation_params(
+        model.set_generation_params(
             duration=duration,
             temperature=1.0,
             top_k=250
@@ -688,7 +720,7 @@ class BabyMusicStudio:
         
         # Generate
         descriptions = [prompt]
-        wav = self.model.generate(descriptions)
+        wav = model.generate(descriptions)
         
         # Save
         torchaudio.save(output_path, wav[0].cpu(), sample_rate=32000)
@@ -804,7 +836,11 @@ class BabyContentFactory:
         print("Adding captions...")
         captioned_clips = []
         for clip in clips:
-            captions = self.transcriber.transcribe_with_timestamps(clip)
+            # Extract audio from video clip first for transcription
+            audio_clip = clip.replace('.mp4', '_audio.mp3')
+            subprocess.run(['ffmpeg', '-y', '-i', clip, '-vn', audio_clip], capture_output=True)
+            
+            captions = self.transcriber.transcribe_with_timestamps(audio_clip)
             captioned = self.video_editor.add_captions(clip, captions, f"{clip}_captions.mp4")
             captioned_clips.append(captioned)
         
@@ -857,15 +893,18 @@ print(f"Content ready: {result['video']}")
 | Design | Canva Pro | $12.99 | Fabric.js + Pillow | $0 |
 | Design | Adobe CC | $54.99 | GIMP + Inkscape | $0 |
 | Video Edit | CapCut Pro | $9.99 | FFmpeg + MoviePy | $0 |
-| Video Edit | Descript | $24 | Whisper + Pydub | $0 |
-| Clips | Opus Clip | $29 | PySceneDetect + Whisper | $0 |
-| Notes | Notion | $10 | Appflowy + SQLite | $0 |
-| Analytics | Google Analytics 360 | $150k/yr | Plausible | $0 (self-host) |
-| Music | Epidemic Sound | $15 | MusicGen | $0 |
-| Images | MidJourney | $30 | Stable Diffusion | $0 |
-| **TOTAL** | | **$186.97/mo** | | **$0/mo** |
+| Video Edit | Descript | $24.00 | Whisper + Pydub | $0 |
+| Clips | Opus Clip | $29.00 | PySceneDetect + Whisper | $0 |
+| Notes | Notion | $10.00 | Appflowy + SQLite | $0 |
+| Analytics | Google Analytics | Free | Plausible | $0 (self-host) |
+| Music | Epidemic Sound | $15.00 | MusicGen | $0 |
+| Images | MidJourney | $30.00 | Stable Diffusion | $0 |
+| **TOTAL (Monthly)** | | **$185.97/mo** | | **$0/mo** |
+| **TOTAL (Annual)** | | **$2,231.64/yr** | | **$0/yr** |
 
-**Annual Savings: $2,243.64** (not including Google Analytics 360)
+**Annual Savings: $2,231.64**
+
+*Note: Google Analytics 360 ($150k/yr) is enterprise-level and not included in consumer comparison. Most content creators use the free version of Google Analytics.*
 
 ---
 
