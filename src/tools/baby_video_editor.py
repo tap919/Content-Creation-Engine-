@@ -201,18 +201,18 @@ class BabyCapCut:
             for clip in txt_clips:
                 try:
                     clip.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("Failed to close text clip during cleanup", error=str(e))
             if final:
                 try:
                     final.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("Failed to close final composite clip during cleanup", error=str(e))
             if video:
                 try:
                     video.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("Failed to close video clip during cleanup", error=str(e))
     
     def resize_for_platform(
         self,
