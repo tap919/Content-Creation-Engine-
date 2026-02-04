@@ -23,7 +23,6 @@ logger = structlog.get_logger(__name__)
 # gRPC imports (optional, gracefully handle if not installed)
 try:
     import grpc
-    from grpc import aio
 
     GRPC_AVAILABLE = True
 except ImportError:
