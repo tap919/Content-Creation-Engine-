@@ -889,14 +889,35 @@ async function createCampaign() {
                 loadCampaignsList();
             }
         } else {
-            // Campaign API might not be implemented yet, show success anyway for demo
-            showToast('success', 'Campaign Created', `"${CampaignWizard.data.name}" is ready to go!`);
-            closeModal('campaign-wizard-modal');
+            // Handle HTTP error responses by showing an error toast
+            let errorMessage = 'Failed to create campaign. Please try again.';
+            try {
+                const errorData = await response.json();
+                if (errorData && (errorData.message || errorData.error)) {
+                    errorMessage = errorData.message || errorData.error;
+                }
+            } catch (parseError) {
+                // Ignore JSON parsing errors and fall back to generic message
+            }
+            showToast('error', 'Campaign Error', errorMessage);
         }
     } catch (error) {
-        // For demo purposes, show success even if API doesn't exist
-        showToast('success', 'Campaign Created', `"${CampaignWizard.data.name}" has been created!`);
-        closeModal('campaign-wizard-modal');
+        // Distinguish network/API-unavailable errors from other exceptions
+        const errorMessage = (error && error.message) ? error.message : String(error);
+        const lowerMessage = errorMessage.toLowerCase();
+        const isNetworkError =
+            lowerMessage.includes('failed to fetch') ||
+            lowerMessage.includes('network') ||
+            lowerMessage.includes('connection');
+
+        if (isNetworkError) {
+            // For demo purposes, simulate a successful campaign creation when API is unavailable
+            showToast('success', 'Campaign Created (Simulated)', `"${CampaignWizard.data.name}" has been created (API unavailable, simulated in demo).`);
+            closeModal('campaign-wizard-modal');
+        } else {
+            console.error('Error creating campaign:', error);
+            showToast('error', 'Campaign Error', 'An unexpected error occurred while creating the campaign. Please try again.');
+        }
     }
 }
 
