@@ -22,7 +22,8 @@ logger = structlog.get_logger(__name__)
 
 # gRPC imports (optional, gracefully handle if not installed)
 try:
-    import grpc
+    import grpc  # noqa: F401 - imported for availability check
+    from grpc import aio  # noqa: F401 - will be used when gRPC server is implemented
 
     GRPC_AVAILABLE = True
 except ImportError:
@@ -31,8 +32,9 @@ except ImportError:
 
 
 # Estimated milliseconds per character for TTS duration estimation
-# Based on average speaking rate of ~150 words per minute (~3 chars/sec)
-ESTIMATED_MS_PER_CHAR = 50
+# Based on average speaking rate of ~150 words per minute with ~5 chars/word average:
+# 150 words/min = 750 chars/min = 12.5 chars/sec = 80ms per char
+ESTIMATED_MS_PER_CHAR = 80
 
 
 class AudioProvider:

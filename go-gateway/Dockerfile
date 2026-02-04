@@ -16,17 +16,6 @@ RUN go mod download || true
 # Copy source code
 COPY . .
 
-# If no Go files are present (placeholder/template setup), create a minimal main.go
-RUN if ! find . -maxdepth 1 -name '*.go' | grep -q .; then cat > main.go << 'EOF' \
-package main
-
-import "net/http"
-
-func main() {
-    _ = http.ListenAndServe(":8080", nil)
-}
-EOF
-fi
 # Build the gateway
 RUN CGO_ENABLED=0 GOOS=linux go build -o gateway .
 

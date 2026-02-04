@@ -5,6 +5,35 @@
 #   - Rust Client (Tauri) - Desktop application (separate build)
 #
 # Communication flow: Rust Client -> Go Gateway -> Python Services -> AI APIs
+#
+# ============================================
+# Docker Compose Profiles
+# ============================================
+# This configuration uses Docker Compose profiles to organize services:
+#
+# Default (no profile): orchestrator, worker, redis, db
+#   docker-compose up
+#
+# With gateway profile: Adds Go API Gateway
+#   docker-compose --profile gateway up
+#
+# With services profile: Adds video-service and audio-service
+#   docker-compose --profile services up
+#
+# Full stack with all profiles:
+#   docker-compose --profile gateway --profile services up
+#
+# With automation (n8n):
+#   docker-compose --profile automation up
+#
+# BREAKING CHANGE: The Docker service previously named "api" has been renamed
+# to "orchestrator". Update any existing scripts or commands accordingly.
+#
+# NOTE: The gateway service depends on orchestrator (which runs by default).
+# The video-service and audio-service require the "services" profile to be
+# explicitly enabled. If running the gateway, you may also want to enable
+# the services profile for full functionality.
+# ============================================
 
 services:
   # ============================================
@@ -26,7 +55,7 @@ services:
       - PYTHON_VIDEO_SERVICE_ADDR=video-service:50052
       - PYTHON_AUDIO_SERVICE_ADDR=audio-service:50053
       - REDIS_URL=redis://redis:6379/0
-      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - JWT_SECRET=${JWT_SECRET?JWT_SECRET is required. Set with: export JWT_SECRET=your-secret or add to .env file}
     depends_on:
       - redis
       - orchestrator

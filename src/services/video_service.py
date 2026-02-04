@@ -22,6 +22,8 @@ logger = structlog.get_logger(__name__)
 
 # gRPC imports (optional, gracefully handle if not installed)
 try:
+    import grpc  # noqa: F401 - imported for availability check
+    from grpc import aio  # noqa: F401 - will be used when gRPC server is implemented
 
     GRPC_AVAILABLE = True
 except ImportError:

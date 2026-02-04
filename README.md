@@ -12,13 +12,14 @@ The system uses a **polyglot architecture** combining Rust, Go, and Python to le
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Rust Client (Tauri)                          │
+│              Rust Client (Tauri) - PLANNED                      │
 │         Desktop UI • Local File Management • API Key Storage    │
+│         (Not yet implemented - see Architecture file)           │
 └─────────────────────────────────────────────────────────────────┘
                               │ REST / WebSocket
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Go API Gateway                               │
+│              Go API Gateway (Placeholder)                       │
 │        Authentication • Rate Limiting • WebSocket Updates       │
 │              Request Routing • Traffic Management               │
 └─────────────────────────────────────────────────────────────────┘
@@ -28,14 +29,18 @@ The system uses a **polyglot architecture** combining Rust, Go, and Python to le
 │                  Python AI Services                             │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
 │  │Video Service │  │Audio Service │  │Avatar Service│         │
-│  │FLUX.1, Sora, │  │MusicGen,     │  │D-ID, Tavus   │         │
-│  │Veo, Runway   │  │ElevenLabs    │  │              │         │
+│  │FLUX.1, Sora, │  │MusicGen,     │  │(Planned)     │         │
+│  │Veo, Runway   │  │ElevenLabs    │  │D-ID, Tavus   │         │
 │  └──────────────┘  └──────────────┘  └──────────────┘         │
 └─────────────────────────────────────────────────────────────────┘
                               │ API Calls
                               ▼
                       External AI APIs
 ```
+
+> **Note:** The Rust/Tauri client and Go gateway are planned components described in the 
+> Architecture file. The Go gateway has a placeholder implementation; the Rust client 
+> will be developed separately. Currently, the Python orchestrator provides direct REST API access.
 
 ### Core Layers
 
@@ -106,8 +111,11 @@ python -m src.main --mode single
 
 ### Using Docker
 
+> **Breaking change:** The Docker service previously named `api` has been renamed to 
+> `orchestrator`. Update any existing scripts or commands accordingly.
+
 ```bash
-# Build and run all services
+# Build and run default services (orchestrator, worker, redis, db)
 docker-compose up --build
 
 # Run with Go gateway and separate Python services
@@ -116,6 +124,8 @@ docker-compose --profile gateway --profile services up --build
 # Run only the Python orchestrator
 docker-compose up orchestrator
 ```
+
+See the comments in `docker-compose.yml` for detailed information about available profiles.
 
 ## 📡 API Endpoints
 

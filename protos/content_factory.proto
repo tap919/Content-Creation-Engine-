@@ -4,21 +4,22 @@
 // Go API Gateway and Python AI Services.
 // 
 // Architecture: Go Gateway -> gRPC -> Python Services -> External AI APIs
+//
+// Requires protobuf >= 3.15 for proto3 optional field support.
+// Generate Python code with:
+//   python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. protos/content_factory.proto
 
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package content_factory;
 
-option go_package = "github.com/content-factory/protos/content_factory";
+option go_package = "github.com/content-factory/go-gateway/protos/content_factory";
 
 // ============================================
 // Common Types
 // ============================================
-
-message Timestamp {
-  int64 seconds = 1;
-  int32 nanos = 2;
-}
 
 message Empty {}
 
@@ -191,7 +192,7 @@ message ProgressUpdate {
   string stage = 2;  // trend_detection, brief_generation, image_generation, audio_generation, video_assembly
   float progress_percent = 3;
   string message = 4;
-  Timestamp timestamp = 5;
+  google.protobuf.Timestamp timestamp = 5;
 }
 
 message BrandParametersResponse {
@@ -229,8 +230,8 @@ message JobStatusResponse {
   string status = 2;  // queued, processing, completed, failed
   float progress_percent = 3;
   string error_message = 4;
-  Timestamp created_at = 5;
-  Timestamp updated_at = 6;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message CancelJobRequest {
