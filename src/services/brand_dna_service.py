@@ -10,7 +10,7 @@ This service handles:
 
 import structlog
 from typing import Dict, Any
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 logger = structlog.get_logger(__name__)
 
