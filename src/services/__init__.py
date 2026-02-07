@@ -6,6 +6,9 @@ Modular services for the polyglot architecture:
 - audio_service: Handles MusicGen, ElevenLabs, Azure Speech, Amazon Polly
 - avatar_service: Handles HeyGen, D-ID, Synthesia, Elai avatar generation
 - social_media_service: Handles Postiz, ImPosting, InstaPy integrations
+- brand_dna_service: Manages consistent branding across all content
+- repurposing_service: Handles multi-platform content adaptation
+- creative_spark_service: Provides AI-powered idea generation
 
 These services are intended to expose gRPC interfaces for communication with
 the Go API Gateway. The currently available servicers are placeholders and 
@@ -21,7 +24,18 @@ from .video_service import VideoServicer
 from .audio_service import AudioServicer
 from .avatar_service import AvatarServicer
 from .social_media_service import SocialMediaServicer
+from .brand_dna_service import BrandDNAService
+from .repurposing_service import ContentRepurposingService
+from .creative_spark_service import CreativeSparkService
 
 # Note: These servicers are placeholders. They are exported for development
 # and testing purposes but are not yet fully functional gRPC servicers.
-__all__ = ["VideoServicer", "AudioServicer", "AvatarServicer", "SocialMediaServicer"]
+__all__ = [
+    "VideoServicer", 
+    "AudioServicer", 
+    "AvatarServicer", 
+    "SocialMediaServicer",
+    "BrandDNAService",
+    "ContentRepurposingService",
+    "CreativeSparkService",
+]

@@ -515,4 +515,198 @@ def create_app(config: Config) -> FastAPI:
         logger.info("Campaign deleted", campaign_id=campaign_id)
         return {"status": "success", "message": f"Campaign {campaign_id} deleted"}
     
+    # Brand DNA endpoints
+    @app.get("/api/brand")
+    async def get_brand_dna(factory: dict = Depends(get_factory)):
+        """Get current brand DNA configuration."""
+        config = factory["config"]
+        return {
+            "colors": {
+                "primary": config.brand_dna.primary_color,
+                "secondary": config.brand_dna.secondary_color,
+                "accent": config.brand_dna.accent_color,
+                "background": config.brand_dna.background_color,
+                "text": config.brand_dna.text_color,
+            },
+            "fonts": {
+                "primary": config.brand_dna.primary_font,
+                "secondary": config.brand_dna.secondary_font,
+            },
+            "logo": {
+                "url": config.brand_dna.logo_url,
+                "position": config.brand_dna.logo_position,
+            },
+            "tone": {
+                "voice": config.brand_dna.tone_of_voice,
+                "style": config.brand_dna.content_style,
+            },
+            "visual": {
+                "animation": config.brand_dna.animation_style,
+                "transition": config.brand_dna.transition_style,
+            }
+        }
+    
+    @app.post("/api/brand")
+    async def update_brand_dna(brand_data: dict, factory: dict = Depends(get_factory)):
+        """Update brand DNA configuration."""
+        logger.info("Brand DNA update requested", fields=list(brand_data.keys()))
+        # In production, this would persist to database
+        return {"status": "success", "updated": brand_data}
+    
+    # Content Repurposing endpoints
+    @app.post("/api/repurpose")
+    async def repurpose_content(
+        content_id: str,
+        platforms: List[str],
+        factory: dict = Depends(get_factory)
+    ):
+        """Repurpose content for multiple platforms."""
+        logger.info(
+            "Content repurposing requested",
+            content_id=content_id,
+            platforms=platforms
+        )
+        
+        # In production, would use actual repurposing service
+        return {
+            "status": "success",
+            "content_id": content_id,
+            "platforms": platforms,
+            "variants_created": len(platforms)
+        }
+    
+    # Creative Spark endpoints
+    @app.post("/api/ideas/generate")
+    async def generate_ideas(
+        niche: str,
+        content_type: str = "video",
+        num_ideas: int = 5
+    ):
+        """Generate creative content ideas."""
+        logger.info(
+            "Idea generation requested",
+            niche=niche,
+            type=content_type,
+            count=num_ideas
+        )
+        
+        # Placeholder response - in production would use CreativeSparkService
+        ideas = []
+        for i in range(num_ideas):
+            ideas.append({
+                "id": f"idea_{i+1}",
+                "title": f"Creative idea {i+1} for {niche}",
+                "hook": f"Engaging hook for {niche} content",
+                "format": "educational",
+                "estimated_time": "30-60 seconds"
+            })
+        
+        return {
+            "status": "success",
+            "niche": niche,
+            "ideas": ideas
+        }
+    
+    @app.post("/api/ideas/hooks")
+    async def generate_hooks(topic: str, platform: str = "tiktok", num_hooks: int = 5):
+        """Generate engaging hooks for a topic."""
+        logger.info("Hook generation requested", topic=topic, platform=platform)
+        
+        hooks = [
+            f"Wait, you didn't know this about {topic}?",
+            f"POV: You just discovered {topic}",
+            f"Nobody talks about this {topic} secret...",
+            f"Stop doing {topic} wrong! Here's why...",
+            f"This {topic} hack changed everything"
+        ]
+        
+        return {
+            "status": "success",
+            "topic": topic,
+            "platform": platform,
+            "hooks": hooks[:num_hooks]
+        }
+    
+    @app.post("/api/ideas/outline")
+    async def generate_script_outline(idea_id: str):
+        """Generate a script outline for an idea."""
+        logger.info("Script outline requested", idea_id=idea_id)
+        
+        return {
+            "status": "success",
+            "idea_id": idea_id,
+            "outline": {
+                "hook": "Grab attention in first 3 seconds",
+                "structure": [
+                    {"section": "Problem", "content": "Identify the issue"},
+                    {"section": "Solution", "content": "Present the answer"},
+                    {"section": "Example", "content": "Show real application"},
+                    {"section": "CTA", "content": "Call to action"}
+                ],
+                "visual_cues": [
+                    "Use on-screen text for key points",
+                    "Show B-roll footage",
+                    "Add captions for accessibility"
+                ]
+            }
+        }
+    
+    # Avatar endpoints
+    @app.post("/api/avatar/create")
+    async def create_avatar(
+        photos: List[UploadFile] = File(...),
+        style: str = "realistic"
+    ):
+        """Create avatar from uploaded photos."""
+        logger.info("Avatar creation requested", num_photos=len(photos), style=style)
+        
+        return {
+            "status": "success",
+            "avatar_id": f"avatar_{uuid.uuid4().hex[:8]}",
+            "style": style,
+            "training_status": "processing"
+        }
+    
+    @app.get("/api/avatars")
+    async def list_avatars():
+        """List all created avatars."""
+        return {
+            "avatars": [
+                {
+                    "id": "avatar_001",
+                    "name": "Professional Avatar",
+                    "style": "realistic",
+                    "status": "ready",
+                    "created_at": "2024-01-15T10:00:00Z"
+                },
+                {
+                    "id": "avatar_002",
+                    "name": "Casual Avatar",
+                    "style": "animated",
+                    "status": "ready",
+                    "created_at": "2024-01-20T14:30:00Z"
+                }
+            ]
+        }
+    
+    @app.post("/api/avatar/{avatar_id}/generate")
+    async def generate_avatar_video(
+        avatar_id: str,
+        script: str,
+        background: str = "default"
+    ):
+        """Generate video with avatar."""
+        logger.info(
+            "Avatar video generation requested",
+            avatar_id=avatar_id,
+            script_length=len(script)
+        )
+        
+        return {
+            "status": "success",
+            "avatar_id": avatar_id,
+            "job_id": str(uuid.uuid4()),
+            "video_url": f"/output/avatars/{avatar_id}_video.mp4"
+        }
+    
     return app
