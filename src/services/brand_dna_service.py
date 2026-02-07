@@ -9,7 +9,7 @@ This service handles:
 """
 
 import structlog
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 from PIL import Image, ImageDraw, ImageFont
 
 logger = structlog.get_logger(__name__)
