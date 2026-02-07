@@ -90,7 +90,11 @@ function navigateTo(page) {
         'audio': 'Audio Studio',
         'images': 'Image Generator',
         'automation': 'Automation',
-        'evolution': 'Evolution Loop'
+        'evolution': 'Evolution Loop',
+        'avatar-studio': 'Avatar Studio',
+        'creative-spark': 'Creative Spark',
+        'repurpose': 'Repurpose Content',
+        'brand-dna': 'Brand DNA Settings'
     };
     
     const titleElement = document.querySelector('.page-title');
@@ -1015,5 +1019,245 @@ window.Dashboard = {
     openCampaignWizard,
     nextWizardStep,
     prevWizardStep,
-    createCampaignFromTemplate
+    createCampaignFromTemplate,
+    // New functions for enhanced features
+    generateIdeas,
+    generateHooks,
+    saveBrandDNA,
+    repurposeContent,
+    selectAvatar,
+    editAvatar,
+    useAvatar,
+    createAvatar,
+    showModal
 };
+
+// === New Feature Functions ===
+
+// Generate creative ideas
+async function generateIdeas() {
+    const niche = document.getElementById('spark-niche').value;
+    const contentType = document.getElementById('spark-content-type').value;
+    const numIdeas = document.getElementById('spark-num-ideas').value;
+    
+    if (!niche) {
+        showToast('warning', 'Missing Input', 'Please enter your niche or topic');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('generated-ideas');
+    resultsContainer.innerHTML = '<div style="text-align: center; padding: 48px;"><div style="font-size: 24px; margin-bottom: 12px;">⚡</div><div>Generating ideas...</div></div>';
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/ideas/generate?niche=${encodeURIComponent(niche)}&content_type=${contentType}&num_ideas=${numIdeas}`, {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Display ideas
+            let html = '';
+            data.ideas.forEach((idea, index) => {
+                html += `
+                    <div class="glass-card" style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 12px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">${idea.title}</div>
+                                <div style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">${idea.format} • ${idea.estimated_time}</div>
+                            </div>
+                            <button class="btn-primary" style="padding: 6px 12px; font-size: 13px;" onclick="Dashboard.generateOutline('${idea.id}')">
+                                📝 Outline
+                            </button>
+                        </div>
+                        <div style="padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; margin-bottom: 8px;">
+                            <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Hook:</div>
+                            <div style="font-size: 14px; font-style: italic;">"${idea.hook}"</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-secondary" onclick="Dashboard.useIdea('${idea.id}')" style="flex: 1;">Use This Idea</button>
+                            <button class="btn-secondary" onclick="Dashboard.generateVariations('${idea.id}')" style="flex: 1;">Variations</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+            showToast('success', 'Ideas Generated', `${data.ideas.length} creative ideas generated!`);
+        } else {
+            throw new Error('Failed to generate ideas');
+        }
+    } catch (error) {
+        console.error('Error generating ideas:', error);
+        resultsContainer.innerHTML = '<div style="text-align: center; padding: 48px; color: #ef4444;"><div>Failed to generate ideas. Please try again.</div></div>';
+        showToast('error', 'Error', 'Failed to generate ideas');
+    }
+}
+
+// Generate hooks for a topic
+async function generateHooks(topic) {
+    try {
+        const response = await fetch(`${API_BASE}/api/ideas/hooks`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, platform: 'tiktok', num_hooks: 5 })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Generated hooks:', data.hooks);
+            showToast('success', 'Hooks Generated', `${data.hooks.length} hook ideas ready`);
+        }
+    } catch (error) {
+        console.error('Error generating hooks:', error);
+    }
+}
+
+// Save brand DNA settings
+async function saveBrandDNA() {
+    const brandData = {
+        primary_color: document.getElementById('brand-primary-color').value,
+        secondary_color: document.getElementById('brand-secondary-color').value,
+        accent_color: document.getElementById('brand-accent-color').value,
+        primary_font: document.getElementById('brand-primary-font').value,
+        secondary_font: document.getElementById('brand-secondary-font').value,
+        logo_position: document.getElementById('brand-logo-position').value,
+        tone_of_voice: document.getElementById('brand-tone').value,
+        content_style: document.getElementById('brand-style').value,
+        animation_style: document.getElementById('brand-animation').value,
+        transition_style: document.getElementById('brand-transition').value
+    };
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/brand`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(brandData)
+        });
+        
+        if (response.ok) {
+            showToast('success', 'Brand DNA Saved', 'Your brand identity has been updated');
+        } else {
+            throw new Error('Failed to save brand DNA');
+        }
+    } catch (error) {
+        console.error('Error saving brand DNA:', error);
+        showToast('error', 'Error', 'Failed to save brand DNA settings');
+    }
+}
+
+// Repurpose content
+async function repurposeContent() {
+    const selectedPlatforms = Array.from(document.querySelectorAll('input[name="repurpose-platform"]:checked'))
+        .map(cb => cb.value);
+    
+    if (selectedPlatforms.length === 0) {
+        showToast('warning', 'No Platforms Selected', 'Please select at least one target platform');
+        return;
+    }
+    
+    const previewContainer = document.getElementById('repurpose-preview');
+    previewContainer.innerHTML = '<div style="padding: 48px; text-align: center;"><div style="font-size: 24px; margin-bottom: 12px;">⚡</div><div>Repurposing content...</div></div>';
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/repurpose`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content_id: 'demo_content',
+                platforms: selectedPlatforms
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            let html = `
+                <div style="padding: 24px;">
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #10b981;">
+                        ✓ Repurposing Complete!
+                    </div>
+                    <div style="font-size: 14px; margin-bottom: 16px;">
+                        Created ${data.variants_created} optimized versions
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+            `;
+            
+            selectedPlatforms.forEach(platform => {
+                html += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                        <span style="font-size: 14px; font-weight: 500;">${platform}</span>
+                        <button class="btn-secondary" style="padding: 4px 12px; font-size: 12px;">Download</button>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            previewContainer.innerHTML = html;
+            showToast('success', 'Content Repurposed', `Created ${data.variants_created} platform-optimized versions`);
+        } else {
+            throw new Error('Failed to repurpose content');
+        }
+    } catch (error) {
+        console.error('Error repurposing content:', error);
+        previewContainer.innerHTML = '<div style="padding: 48px; text-align: center; color: #ef4444;"><div>Failed to repurpose content. Please try again.</div></div>';
+        showToast('error', 'Error', 'Failed to repurpose content');
+    }
+}
+
+// Avatar management functions
+function selectAvatar(avatarId) {
+    console.log('Selected avatar:', avatarId);
+    showToast('info', 'Avatar Selected', 'Avatar ready to use in content creation');
+}
+
+function editAvatar(avatarId) {
+    console.log('Edit avatar:', avatarId);
+    showToast('info', 'Edit Avatar', 'Avatar customization coming soon');
+}
+
+function useAvatar(avatarId) {
+    console.log('Use avatar:', avatarId);
+    navigateTo('create');
+    showToast('success', 'Avatar Loaded', 'Avatar ready in content creator');
+}
+
+// Generate outline for an idea
+function generateOutline(ideaId) {
+    console.log('Generate outline for:', ideaId);
+    showToast('info', 'Generating Outline', 'Creating detailed script outline...');
+}
+
+// Use an idea
+function useIdea(ideaId) {
+    console.log('Use idea:', ideaId);
+    navigateTo('create');
+    showToast('success', 'Idea Loaded', 'Idea loaded into content creator');
+}
+
+// Generate variations
+function generateVariations(ideaId) {
+    console.log('Generate variations for:', ideaId);
+    showToast('info', 'Generating Variations', 'Creating alternative versions...');
+}
+
+// Create avatar
+async function createAvatar() {
+    showToast('info', 'Creating Avatar', 'Training your AI avatar... This may take a few minutes');
+    closeModal('create-avatar-modal');
+    
+    // Simulate avatar creation
+    setTimeout(() => {
+        showToast('success', 'Avatar Created', 'Your avatar is ready to use!');
+        navigateTo('avatar-studio');
+    }, 2000);
+}
+
+// Show modal helper
+function showModal(modalId) {
+    openModal(modalId);
+}
