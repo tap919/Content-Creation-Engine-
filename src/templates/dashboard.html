@@ -65,6 +65,21 @@
                     <span class="nav-icon">🖼️</span>
                     <span class="nav-label">Image Generator</span>
                 </a>
+                <a class="nav-item" data-page="avatar-studio">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Avatar Studio</span>
+                    <span class="nav-badge">New</span>
+                </a>
+                <a class="nav-item" data-page="creative-spark">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-label">Creative Spark</span>
+                    <span class="nav-badge">New</span>
+                </a>
+                <a class="nav-item" data-page="repurpose">
+                    <span class="nav-icon">♻️</span>
+                    <span class="nav-label">Repurpose Content</span>
+                    <span class="nav-badge">New</span>
+                </a>
                 
                 <div class="nav-title">System</div>
                 <a class="nav-item" data-page="automation">
@@ -74,6 +89,11 @@
                 <a class="nav-item" data-page="evolution">
                     <span class="nav-icon">🧬</span>
                     <span class="nav-label">Evolution Loop</span>
+                </a>
+                <a class="nav-item" data-page="brand-dna">
+                    <span class="nav-icon">🎨</span>
+                    <span class="nav-label">Brand DNA</span>
+                    <span class="nav-badge">New</span>
                 </a>
                 <a class="nav-item" data-page="settings">
                     <span class="nav-icon">⚙️</span>
@@ -989,6 +1009,395 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Avatar Studio Page -->
+                <div id="page-avatar-studio" class="page-content hidden">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">👤 Avatar Studio</h2>
+                                <p class="card-subtitle">Create and manage your AI avatars</p>
+                            </div>
+                            <button class="btn-primary" onclick="Dashboard.showModal('create-avatar-modal')">
+                                + Create Avatar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                                <div class="glass-card" style="cursor: pointer;" onclick="Dashboard.selectAvatar('avatar_001')">
+                                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 64px;">
+                                        👤
+                                    </div>
+                                    <div style="padding: 12px;">
+                                        <div style="font-weight: 600; margin-bottom: 4px;">Professional Avatar</div>
+                                        <div style="font-size: 13px; color: #94a3b8;">Realistic Style • Ready</div>
+                                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                            <button class="btn-secondary" style="flex: 1;" onclick="event.stopPropagation(); Dashboard.editAvatar('avatar_001')">Edit</button>
+                                            <button class="btn-primary" style="flex: 1;" onclick="event.stopPropagation(); Dashboard.useAvatar('avatar_001')">Use</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="glass-card" style="cursor: pointer;">
+                                    <div style="aspect-ratio: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 64px;">
+                                        🎭
+                                    </div>
+                                    <div style="padding: 12px;">
+                                        <div style="font-weight: 600; margin-bottom: 4px;">Casual Avatar</div>
+                                        <div style="font-size: 13px; color: #94a3b8;">Animated Style • Ready</div>
+                                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                            <button class="btn-secondary" style="flex: 1;" onclick="event.stopPropagation()">Edit</button>
+                                            <button class="btn-primary" style="flex: 1;" onclick="event.stopPropagation()">Use</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="glass-card" style="border: 2px dashed rgba(139, 92, 246, 0.3); background: transparent; cursor: pointer;" onclick="Dashboard.showModal('create-avatar-modal')">
+                                    <div style="aspect-ratio: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px;">
+                                        <div style="font-size: 48px;">➕</div>
+                                        <div style="font-weight: 600; color: #8b5cf6;">Create New Avatar</div>
+                                        <div style="font-size: 13px; color: #94a3b8; text-align: center; padding: 0 24px;">Upload photos to train your AI avatar</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Creative Spark Page -->
+                <div id="page-creative-spark" class="page-content hidden">
+                    <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">💡 Generate Ideas</h2>
+                                    <p class="card-subtitle">AI-powered content suggestions for your niche</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Your Niche or Topic</label>
+                                    <input type="text" class="form-input" id="spark-niche" placeholder="e.g., fitness, tech reviews, cooking">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Content Type</label>
+                                    <select class="form-input" id="spark-content-type">
+                                        <option value="video">Video</option>
+                                        <option value="image">Image</option>
+                                        <option value="post">Text Post</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Number of Ideas</label>
+                                    <select class="form-input" id="spark-num-ideas">
+                                        <option value="3">3 ideas</option>
+                                        <option value="5" selected>5 ideas</option>
+                                        <option value="10">10 ideas</option>
+                                    </select>
+                                </div>
+                                <button class="btn-primary" style="width: 100%;" onclick="Dashboard.generateIdeas()">
+                                    ✨ Generate Ideas
+                                </button>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h2 class="card-title">🎯 Generated Ideas</h2>
+                            </div>
+                            <div class="card-body" id="generated-ideas">
+                                <div style="text-align: center; padding: 48px 24px; color: #94a3b8;">
+                                    <div style="font-size: 48px; margin-bottom: 16px;">💭</div>
+                                    <div>Enter your niche and generate ideas to get started</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">🔥 Trending Topics</h2>
+                                <p class="card-subtitle">Hot topics in your niche right now</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                                <div class="glass-card">
+                                    <div style="display: flex; align-items: start; gap: 12px;">
+                                        <div style="font-size: 24px;">📈</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; margin-bottom: 4px;">AI Tools for Creators</div>
+                                            <div style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">+185% growth</div>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span style="padding: 4px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; font-size: 11px; color: #8b5cf6;">TikTok</span>
+                                                <span style="padding: 4px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; font-size: 11px; color: #8b5cf6;">YouTube</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="glass-card">
+                                    <div style="display: flex; align-items: start; gap: 12px;">
+                                        <div style="font-size: 24px;">🔥</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; margin-bottom: 4px;">Behind the Scenes</div>
+                                            <div style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">+120% growth</div>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span style="padding: 4px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; font-size: 11px; color: #8b5cf6;">Instagram</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="glass-card">
+                                    <div style="display: flex; align-items: start; gap: 12px;">
+                                        <div style="font-size: 24px;">💎</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; margin-bottom: 4px;">Quick Tips Format</div>
+                                            <div style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">+95% growth</div>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span style="padding: 4px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; font-size: 11px; color: #8b5cf6;">All Platforms</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Repurpose Content Page -->
+                <div id="page-repurpose" class="page-content hidden">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">♻️ Repurpose Content</h2>
+                                <p class="card-subtitle">One-click multi-platform adaptation</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                                <div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">1. Select Source Content</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Upload File</label>
+                                        <input type="file" class="form-input" id="repurpose-file" accept="video/*,image/*">
+                                    </div>
+                                    <div style="margin: 24px 0; text-align: center; color: #94a3b8;">OR</div>
+                                    <div class="form-group">
+                                        <label class="form-label">Select from Library</label>
+                                        <select class="form-input" id="repurpose-existing">
+                                            <option value="">Choose existing content...</option>
+                                            <option value="content_001">My Latest Video.mp4</option>
+                                            <option value="content_002">Product Demo.mp4</option>
+                                            <option value="content_003">Tutorial Part 1.mp4</option>
+                                        </select>
+                                    </div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 24px 0 16px;">2. Select Target Platforms</h3>
+                                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; cursor: pointer;">
+                                            <input type="checkbox" name="repurpose-platform" value="instagram_post" checked>
+                                            <div>
+                                                <div style="font-weight: 600;">Instagram Post (1:1)</div>
+                                                <div style="font-size: 12px; color: #94a3b8;">1080x1080 • Max 60s</div>
+                                            </div>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; cursor: pointer;">
+                                            <input type="checkbox" name="repurpose-platform" value="instagram_reel" checked>
+                                            <div>
+                                                <div style="font-weight: 600;">Instagram Reel (9:16)</div>
+                                                <div style="font-size: 12px; color: #94a3b8;">1080x1920 • Max 90s</div>
+                                            </div>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; cursor: pointer;">
+                                            <input type="checkbox" name="repurpose-platform" value="tiktok" checked>
+                                            <div>
+                                                <div style="font-weight: 600;">TikTok (9:16)</div>
+                                                <div style="font-size: 12px; color: #94a3b8;">1080x1920 • Max 180s</div>
+                                            </div>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; cursor: pointer;">
+                                            <input type="checkbox" name="repurpose-platform" value="youtube_shorts">
+                                            <div>
+                                                <div style="font-weight: 600;">YouTube Shorts (9:16)</div>
+                                                <div style="font-size: 12px; color: #94a3b8;">1080x1920 • Max 60s</div>
+                                            </div>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; cursor: pointer;">
+                                            <input type="checkbox" name="repurpose-platform" value="youtube">
+                                            <div>
+                                                <div style="font-weight: 600;">YouTube (16:9)</div>
+                                                <div style="font-size: 12px; color: #94a3b8;">1920x1080 • No limit</div>
+                                            </div>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; cursor: pointer;">
+                                            <input type="checkbox" name="repurpose-platform" value="linkedin">
+                                            <div>
+                                                <div style="font-weight: 600;">LinkedIn (1:1)</div>
+                                                <div style="font-size: 12px; color: #94a3b8;">1200x1200 • Max 600s</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <button class="btn-primary" style="width: 100%; margin-top: 24px;" onclick="Dashboard.repurposeContent()">
+                                        ♻️ Repurpose Now
+                                    </button>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Preview & Results</h3>
+                                    <div id="repurpose-preview" style="background: rgba(139, 92, 246, 0.05); border-radius: 8px; padding: 48px 24px; text-align: center; color: #94a3b8;">
+                                        <div style="font-size: 48px; margin-bottom: 16px;">📱</div>
+                                        <div>Select content and platforms to preview</div>
+                                    </div>
+                                    <div style="margin-top: 24px;">
+                                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">What gets optimized:</h4>
+                                        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+                                            <li style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="color: #10b981;">✓</span>
+                                                <span style="font-size: 14px;">Aspect ratio for each platform</span>
+                                            </li>
+                                            <li style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="color: #10b981;">✓</span>
+                                                <span style="font-size: 14px;">Duration trimming to fit limits</span>
+                                            </li>
+                                            <li style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="color: #10b981;">✓</span>
+                                                <span style="font-size: 14px;">Platform-specific captions</span>
+                                            </li>
+                                            <li style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="color: #10b981;">✓</span>
+                                                <span style="font-size: 14px;">Brand DNA styling applied</span>
+                                            </li>
+                                            <li style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="color: #10b981;">✓</span>
+                                                <span style="font-size: 14px;">Optimal quality settings</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Brand DNA Page -->
+                <div id="page-brand-dna" class="page-content hidden">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">🎨 Brand DNA Settings</h2>
+                                <p class="card-subtitle">Define your brand identity for consistent content</p>
+                            </div>
+                            <button class="btn-primary" onclick="Dashboard.saveBrandDNA()">
+                                💾 Save Changes
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                                <div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Colors</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Primary Color</label>
+                                        <div style="display: flex; gap: 12px; align-items: center;">
+                                            <input type="color" id="brand-primary-color" value="#3B82F6" style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;" oninput="this.nextElementSibling.value = this.value">
+                                            <input type="text" class="form-input" value="#3B82F6" style="flex: 1;" oninput="this.previousElementSibling.value = this.value">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Secondary Color</label>
+                                        <div style="display: flex; gap: 12px; align-items: center;">
+                                            <input type="color" id="brand-secondary-color" value="#8B5CF6" style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;" oninput="this.nextElementSibling.value = this.value">
+                                            <input type="text" class="form-input" value="#8B5CF6" style="flex: 1;" oninput="this.previousElementSibling.value = this.value">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Accent Color</label>
+                                        <div style="display: flex; gap: 12px; align-items: center;">
+                                            <input type="color" id="brand-accent-color" value="#F59E0B" style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;" oninput="this.nextElementSibling.value = this.value">
+                                            <input type="text" class="form-input" value="#F59E0B" style="flex: 1;" oninput="this.previousElementSibling.value = this.value">
+                                        </div>
+                                    </div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 24px 0 16px;">Typography</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Primary Font</label>
+                                        <select class="form-input" id="brand-primary-font">
+                                            <option value="Inter" selected>Inter</option>
+                                            <option value="Roboto">Roboto</option>
+                                            <option value="Montserrat">Montserrat</option>
+                                            <option value="Poppins">Poppins</option>
+                                            <option value="Open Sans">Open Sans</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Secondary Font</label>
+                                        <select class="form-input" id="brand-secondary-font">
+                                            <option value="Roboto" selected>Roboto</option>
+                                            <option value="Inter">Inter</option>
+                                            <option value="Lato">Lato</option>
+                                            <option value="Raleway">Raleway</option>
+                                        </select>
+                                    </div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 24px 0 16px;">Logo</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Logo Upload</label>
+                                        <input type="file" class="form-input" id="brand-logo" accept="image/*">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Logo Position</label>
+                                        <select class="form-input" id="brand-logo-position">
+                                            <option value="top-left">Top Left</option>
+                                            <option value="top-right" selected>Top Right</option>
+                                            <option value="bottom-left">Bottom Left</option>
+                                            <option value="bottom-right">Bottom Right</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Tone & Style</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Tone of Voice</label>
+                                        <select class="form-input" id="brand-tone">
+                                            <option value="professional" selected>Professional</option>
+                                            <option value="casual">Casual & Friendly</option>
+                                            <option value="friendly">Warm & Friendly</option>
+                                            <option value="authoritative">Authoritative & Expert</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Content Style</label>
+                                        <select class="form-input" id="brand-style">
+                                            <option value="informative" selected>Informative & Educational</option>
+                                            <option value="entertaining">Entertaining & Fun</option>
+                                            <option value="educational">Educational & Teaching</option>
+                                            <option value="promotional">Promotional & Persuasive</option>
+                                        </select>
+                                    </div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 24px 0 16px;">Visual Style</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Animation Style</label>
+                                        <select class="form-input" id="brand-animation">
+                                            <option value="smooth" selected>Smooth & Elegant</option>
+                                            <option value="dynamic">Dynamic & Energetic</option>
+                                            <option value="minimal">Minimal & Clean</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Transition Style</label>
+                                        <select class="form-input" id="brand-transition">
+                                            <option value="fade" selected>Fade</option>
+                                            <option value="slide">Slide</option>
+                                            <option value="cut">Cut</option>
+                                            <option value="wipe">Wipe</option>
+                                        </select>
+                                    </div>
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 24px 0 16px;">Preview</h3>
+                                    <div style="background: linear-gradient(135deg, var(--primary-color, #3B82F6) 0%, var(--secondary-color, #8B5CF6) 100%); border-radius: 12px; padding: 32px; text-align: center; color: white;">
+                                        <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px; font-family: var(--primary-font, 'Inter');">Your Brand</div>
+                                        <div style="font-size: 14px; opacity: 0.9; font-family: var(--secondary-font, 'Roboto');">This is how your content will look</div>
+                                        <div style="margin-top: 24px; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 8px; backdrop-filter: blur(10px);">
+                                            <div style="font-size: 16px; margin-bottom: 8px;">Sample Content Card</div>
+                                            <div style="font-size: 12px; opacity: 0.8;">With your brand styling applied</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1247,6 +1656,41 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" onclick="Dashboard.closeModal('global-help-modal')">Got it!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Avatar Modal -->
+    <div id="create-avatar-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">👤 Create New Avatar</h3>
+                <button class="modal-close" onclick="Dashboard.closeModal('create-avatar-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #94a3b8; margin-bottom: 24px;">Upload 10-20 photos of yourself for best results. AI will train your digital twin.</p>
+                <div class="form-group">
+                    <label class="form-label">Avatar Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., Professional Avatar, Casual Look">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Avatar Style</label>
+                    <select class="form-input">
+                        <option value="realistic">Realistic</option>
+                        <option value="animated">Animated</option>
+                        <option value="cartoon">Cartoon</option>
+                        <option value="professional">Professional</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Upload Photos</label>
+                    <input type="file" class="form-input" multiple accept="image/*">
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">Upload 10-20 clear photos from different angles</div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn-secondary" style="flex: 1;" onclick="Dashboard.closeModal('create-avatar-modal')">Cancel</button>
+                    <button class="btn-primary" style="flex: 1;" onclick="Dashboard.createAvatar()">Create Avatar</button>
+                </div>
             </div>
         </div>
     </div>

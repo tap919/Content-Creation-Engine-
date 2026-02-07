@@ -95,6 +95,33 @@ class GatewayConfig(BaseModel):
     cors: CORSConfig = Field(default_factory=CORSConfig)
 
 
+class BrandDNAConfig(BaseModel):
+    """Brand DNA configuration for consistent styling across content."""
+    
+    # Colors
+    primary_color: str = Field(default="#3B82F6")
+    secondary_color: str = Field(default="#8B5CF6")
+    accent_color: str = Field(default="#F59E0B")
+    background_color: str = Field(default="#FFFFFF")
+    text_color: str = Field(default="#1F2937")
+    
+    # Typography
+    primary_font: str = Field(default="Inter")
+    secondary_font: str = Field(default="Roboto")
+    
+    # Logo
+    logo_url: Optional[str] = Field(default=None)
+    logo_position: str = Field(default="top-right")  # Options: top-left, top-right, bottom-left, bottom-right
+    
+    # Tone and Style
+    tone_of_voice: str = Field(default="professional")  # Options: professional, casual, friendly, authoritative
+    content_style: str = Field(default="informative")  # Options: informative, entertaining, educational, promotional
+    
+    # Visual Style
+    animation_style: str = Field(default="smooth")  # Options: smooth, dynamic, minimal
+    transition_style: str = Field(default="fade")  # Options: fade, slide, cut, wipe
+
+
 class WorkflowConfig(BaseModel):
     """Workflow orchestration configuration."""
     
@@ -161,6 +188,9 @@ class Config(BaseModel):
     services: ServicesConfig = Field(default_factory=ServicesConfig)
     gateway: GatewayConfig = Field(default_factory=GatewayConfig)
     workflow: WorkflowConfig = Field(default_factory=WorkflowConfig)
+    
+    # Brand DNA settings
+    brand_dna: BrandDNAConfig = Field(default_factory=BrandDNAConfig)
 
 
 def load_config(config_path: Path) -> Config:
