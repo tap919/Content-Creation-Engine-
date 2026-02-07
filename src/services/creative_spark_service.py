@@ -9,7 +9,7 @@ This service handles:
 """
 
 import structlog
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 import random
 
 logger = structlog.get_logger(__name__)
