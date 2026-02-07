@@ -550,6 +550,16 @@ def create_app(config: Config) -> FastAPI:
     async def update_brand_dna(brand_data: dict, factory: dict = Depends(get_factory)):
         """Update brand DNA configuration."""
         logger.info("Brand DNA update requested", fields=list(brand_data.keys()))
+        
+        # Apply updates to in-memory config so subsequent GETs reflect the change
+        config = factory["config"]
+        brand_dna = config.brand_dna
+        
+        # Update brand DNA fields
+        for key, value in brand_data.items():
+            if hasattr(brand_dna, key):
+                setattr(brand_dna, key, value)
+        
         # In production, this would persist to database
         return {"status": "success", "updated": brand_data}
     
@@ -611,9 +621,18 @@ def create_app(config: Config) -> FastAPI:
             "ideas": ideas
         }
     
+    class HooksRequest(BaseModel):
+        """Request model for hook generation."""
+        topic: str = Field(..., description="Topic for hook generation")
+        platform: str = Field(default="tiktok", description="Target platform")
+        num_hooks: int = Field(default=5, ge=1, le=20, description="Number of hooks to generate")
+    
     @app.post("/api/ideas/hooks")
-    async def generate_hooks(topic: str, platform: str = "tiktok", num_hooks: int = 5):
+    async def generate_hooks(request: HooksRequest):
         """Generate engaging hooks for a topic."""
+        topic = request.topic
+        platform = request.platform
+        num_hooks = request.num_hooks
         logger.info("Hook generation requested", topic=topic, platform=platform)
         
         hooks = [

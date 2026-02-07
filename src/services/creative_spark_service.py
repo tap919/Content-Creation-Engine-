@@ -11,6 +11,7 @@ This service handles:
 import structlog
 from typing import List, Dict, Any
 import random
+import uuid
 
 logger = structlog.get_logger(__name__)
 

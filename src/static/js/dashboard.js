@@ -1059,33 +1059,100 @@ async function generateIdeas() {
         if (response.ok) {
             const data = await response.json();
             
-            // Display ideas
-            let html = '';
-            data.ideas.forEach((idea, index) => {
-                html += `
-                    <div class="glass-card" style="margin-bottom: 16px;">
-                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 12px;">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">${idea.title}</div>
-                                <div style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">${idea.format} • ${idea.estimated_time}</div>
-                            </div>
-                            <button class="btn-primary" style="padding: 6px 12px; font-size: 13px;" onclick="Dashboard.generateOutline('${idea.id}')">
-                                📝 Outline
-                            </button>
-                        </div>
-                        <div style="padding: 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; margin-bottom: 8px;">
-                            <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Hook:</div>
-                            <div style="font-size: 14px; font-style: italic;">"${idea.hook}"</div>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-secondary" onclick="Dashboard.useIdea('${idea.id}')" style="flex: 1;">Use This Idea</button>
-                            <button class="btn-secondary" onclick="Dashboard.generateVariations('${idea.id}')" style="flex: 1;">Variations</button>
-                        </div>
-                    </div>
-                `;
+            // Clear previous results and build DOM nodes safely
+            resultsContainer.innerHTML = '';
+            
+            data.ideas.forEach((idea) => {
+                const card = document.createElement('div');
+                card.className = 'glass-card';
+                card.style.marginBottom = '16px';
+                
+                const header = document.createElement('div');
+                header.style.display = 'flex';
+                header.style.justifyContent = 'space-between';
+                header.style.alignItems = 'start';
+                header.style.marginBottom = '12px';
+                
+                const headerLeft = document.createElement('div');
+                headerLeft.style.flex = '1';
+                
+                const titleEl = document.createElement('div');
+                titleEl.style.fontWeight = '600';
+                titleEl.style.fontSize = '16px';
+                titleEl.style.marginBottom = '4px';
+                titleEl.textContent = idea.title;
+                
+                const metaEl = document.createElement('div');
+                metaEl.style.fontSize = '13px';
+                metaEl.style.color = '#94a3b8';
+                metaEl.style.marginBottom = '8px';
+                metaEl.textContent = `${idea.format} • ${idea.estimated_time}`;
+                
+                headerLeft.appendChild(titleEl);
+                headerLeft.appendChild(metaEl);
+                
+                const outlineBtn = document.createElement('button');
+                outlineBtn.className = 'btn-primary';
+                outlineBtn.style.padding = '6px 12px';
+                outlineBtn.style.fontSize = '13px';
+                outlineBtn.textContent = '📝 Outline';
+                outlineBtn.addEventListener('click', () => {
+                    Dashboard.generateOutline(idea.id);
+                });
+                
+                header.appendChild(headerLeft);
+                header.appendChild(outlineBtn);
+                
+                const hookContainer = document.createElement('div');
+                hookContainer.style.padding = '12px';
+                hookContainer.style.background = 'rgba(139, 92, 246, 0.05)';
+                hookContainer.style.borderRadius = '8px';
+                hookContainer.style.marginBottom = '8px';
+                
+                const hookLabel = document.createElement('div');
+                hookLabel.style.fontSize = '13px';
+                hookLabel.style.fontWeight = '500';
+                hookLabel.style.marginBottom = '4px';
+                hookLabel.textContent = 'Hook:';
+                
+                const hookText = document.createElement('div');
+                hookText.style.fontSize = '14px';
+                hookText.style.fontStyle = 'italic';
+                hookText.textContent = `"${idea.hook}"`;
+                
+                hookContainer.appendChild(hookLabel);
+                hookContainer.appendChild(hookText);
+                
+                const actions = document.createElement('div');
+                actions.style.display = 'flex';
+                actions.style.gap = '8px';
+                
+                const useBtn = document.createElement('button');
+                useBtn.className = 'btn-secondary';
+                useBtn.style.flex = '1';
+                useBtn.textContent = 'Use This Idea';
+                useBtn.addEventListener('click', () => {
+                    Dashboard.useIdea(idea.id);
+                });
+                
+                const variationsBtn = document.createElement('button');
+                variationsBtn.className = 'btn-secondary';
+                variationsBtn.style.flex = '1';
+                variationsBtn.textContent = 'Variations';
+                variationsBtn.addEventListener('click', () => {
+                    Dashboard.generateVariations(idea.id);
+                });
+                
+                actions.appendChild(useBtn);
+                actions.appendChild(variationsBtn);
+                
+                card.appendChild(header);
+                card.appendChild(hookContainer);
+                card.appendChild(actions);
+                
+                resultsContainer.appendChild(card);
             });
             
-            resultsContainer.innerHTML = html;
             showToast('success', 'Ideas Generated', `${data.ideas.length} creative ideas generated!`);
         } else {
             throw new Error('Failed to generate ideas');
@@ -1103,7 +1170,7 @@ async function generateHooks(topic) {
         const response = await fetch(`${API_BASE}/api/ideas/hooks`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topic, platform: 'tiktok', num_hooks: 5 })
+            body: JSON.stringify({ topic: topic, platform: 'tiktok', num_hooks: 5 })
         });
         
         if (response.ok) {

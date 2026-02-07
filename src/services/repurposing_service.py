@@ -175,10 +175,12 @@ class ContentRepurposingService:
         )
         
         # Placeholder: In production, would actually process the video
+        # For now, return status indicating this is a placeholder
         return {
-            "status": "success",
+            "status": "placeholder",
             "format": f"{target_width}x{target_height}",
             "duration": max_duration,
+            "note": "Video processing not implemented - placeholder only"
         }
     
     async def _repurpose_image(
@@ -223,6 +225,8 @@ class ContentRepurposingService:
                 
                 # Resize to target dimensions
                 img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+                
+                # (Brand colors currently not applied in this method.)
                 
                 # Save
                 img.save(output_path, quality=95)
