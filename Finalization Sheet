@@ -1,0 +1,233 @@
+A full content engine means treating every medium—video, shorts, podcasts, ads, vlogs, voiceovers, scripts, storyboards, thumbnails, captions, and repurposed derivatives—as nodes in one unified production graph. The architecture shifts from “book-to-script” to a media‑agnostic creation pipeline that ingests anything and outputs everything.
+
+Below is the rebuilt blueprint for OmniCreator Studio: The Universal Content Engine.
+
+---
+
+🧩 Core pillars of the Universal Content Engine
+
+Content Ingest Layer
+Accepts any raw material:
+- Raw video
+- Audio/podcast episodes
+- Long-form scripts
+- Short-form ideas
+- Commercial briefs
+- Vlog footage
+- Social posts
+- Meeting recordings
+- Voice notes
+
+Each input becomes a Content Object with metadata:
+- type (video, audio, text, mixed)
+- duration
+- topics
+- speakers
+- visual anchors
+- sentiment
+- quality metrics
+
+This is the foundation for all downstream tools.
+
+---
+
+🎛️ Modular Creation Labs
+
+Script Lab
+Transforms any input into structured scripts:
+- Short-form hooks (5–15 seconds)
+- Shorts/Reels/TikTok scripts (15–60 seconds)
+- Long-form video scripts (3–20 minutes)
+- Podcast outlines
+- Commercial scripts
+- Vlog narration
+- Voiceover scripts
+- Educational explainers
+
+Includes:
+- Tone presets (cinematic, comedic, authoritative, conversational)
+- Platform presets (TikTok, YouTube, IG, LinkedIn, podcast)
+- Multi-version generation (A/B/C variants)
+
+---
+
+Visual Story Lab
+Turns scripts or videos into visual plans:
+- Scene breakdowns
+- B‑roll suggestions
+- Shot lists
+- Camera movement suggestions
+- Lighting/mood boards
+- Thumbnail prompt ideas
+- On-screen text suggestions
+
+This is the “Director’s Assistant” for all creators.
+
+---
+
+Audio Lab
+Handles all voice and sound needs:
+- Voice cloning
+- Voiceover generation
+- Podcast cleanup
+- Noise reduction
+- Music bed suggestions
+- Emotional delivery control
+- Multi-speaker synthesis
+
+---
+
+Avatar & Presenter Lab
+For creators who don’t want to be on camera:
+- Talking head avatars
+- Character presenters
+- Brand mascots
+- Lip-sync alignment
+- Style presets (realistic, stylized, animated)
+
+---
+
+Video Assembly Lab
+A simplified timeline editor:
+- Multi-track editing
+- Auto-resize for 16:9, 9:16, 1:1
+- Auto-captioning
+- Auto-b-roll insertion
+- Auto-zoom/pan for emphasis
+- Template-based intros/outros
+- Brand kits (colors, fonts, overlays)
+
+---
+
+Repurposing Lab
+The highest-leverage module:
+- Long video → 10 shorts
+- Podcast → clips + quotes + blog + newsletter
+- Commercial → multiple ad variants
+- Vlog → highlight reels
+- Webinar → course modules
+- Meeting → action items + summaries + clips
+
+This is where creators multiply output without multiplying effort.
+
+---
+
+🏗️ System Architecture (Media-Agnostic)
+
+Experience Layer (Frontend)
+- Next.js or SvelteKit
+- Glassmorphic UI with large, clear controls
+- Drag-and-drop ingest
+- Studio-style workspace
+- Guided workflows for non-technical users
+
+---
+
+Orchestration Layer (Backend)
+A Node/NestJS service that:
+- Normalizes all inputs into Content Objects
+- Routes tasks to the correct AI engines
+- Manages job queues for heavy tasks
+- Handles provider failover (Claude/GPT/Gemini)
+- Stores project states and autosaves
+- Manages OAuth for social platforms
+
+---
+
+AI Engine Layer
+A set of interchangeable adapters:
+- LLMProvider (Claude, GPT, Gemini)
+- VoiceProvider (ElevenLabs)
+- AvatarProvider (D-ID, Synthesia)
+- VisionProvider (OpenAI Vision, Gemini Vision)
+- AudioProvider (Whisper, Adobe Speech Enhance)
+- RenderProvider (FFmpeg workers or cloud renderers)
+
+Each provider implements a shared interface so you can swap vendors without rewriting features.
+
+---
+
+Data Layer
+- Postgres for structured data
+- S3-compatible storage for media
+- Redis for job queues and caching
+- CDN for fast asset delivery
+
+Entities:
+- Project
+- ContentObject
+- ScriptDraft
+- StoryboardScene
+- MediaAsset
+- Timeline
+- RepurposedAsset
+- ScheduledPost
+
+---
+
+Distribution Layer
+Handles publishing and scheduling:
+- YouTube API
+- TikTok API
+- Instagram Graph API
+- Podcast RSS automation
+- LinkedIn posting
+- Facebook Pages
+- Twitter/X
+
+Includes:
+- Content calendar
+- Multi-platform scheduling
+- Auto-formatting per platform
+- Performance tracking
+
+---
+
+🔐 Security & Trust Layer
+Critical for older or non-technical users:
+- Backend proxy for all AI calls
+- No API keys exposed to the client
+- Role-based access
+- Audit logs
+- Version history
+- Autosave every 30 seconds
+- Recovery snapshots
+
+---
+
+🧠 Unified Content Graph (the secret weapon)
+Every piece of content is a node in a graph:
+- A long-form video links to its clips
+- Clips link to their scripts
+- Scripts link to their storyboards
+- Storyboards link to their assets
+- Assets link to their render jobs
+- Render jobs link to their scheduled posts
+
+This makes the system:
+- Traceable
+- Repurposable
+- Extensible
+- AI-friendly
+
+---
+
+🚀 What this architecture unlocks
+- One input → dozens of outputs  
+- One script → multiple formats  
+- One video → shorts, ads, thumbnails, captions, quotes  
+- One podcast → clips, blog posts, newsletters, social posts  
+- One commercial → multiple ad variants  
+
+It becomes a true content engine, not a single-purpose tool.
+
+---
+
+If you want, I can now generate:
+- A full folder structure for the entire system  
+- API contracts for each module  
+- A data model diagram  
+- A feature roadmap for v1 → v2 → v3  
+- A brand identity system for OmniCreator Studio  
+
+Which direction do you want to lock in next?
