@@ -115,7 +115,9 @@ class ContentRepurposingService:
         output_dir.mkdir(parents=True, exist_ok=True)
         
         file_id = str(uuid.uuid4())[:8]
-        output_path = output_dir / f"{platform}_{file_id}.{content_path.suffix}"
+        # Remove leading dot from suffix
+        suffix = content_path.suffix.lstrip('.')
+        output_path = output_dir / f"{platform}_{file_id}.{suffix}"
         
         # Repurpose based on content type
         if content_type == "video":

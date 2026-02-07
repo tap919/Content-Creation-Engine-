@@ -553,26 +553,30 @@ def create_app(config: Config) -> FastAPI:
         # In production, this would persist to database
         return {"status": "success", "updated": brand_data}
     
+    class RepurposeRequest(BaseModel):
+        """Request model for content repurposing."""
+        content_id: str = Field(..., description="ID of content to repurpose")
+        platforms: List[str] = Field(..., description="Target platforms")
+    
     # Content Repurposing endpoints
     @app.post("/api/repurpose")
     async def repurpose_content(
-        content_id: str,
-        platforms: List[str],
+        request: RepurposeRequest,
         factory: dict = Depends(get_factory)
     ):
         """Repurpose content for multiple platforms."""
         logger.info(
             "Content repurposing requested",
-            content_id=content_id,
-            platforms=platforms
+            content_id=request.content_id,
+            platforms=request.platforms
         )
         
         # In production, would use actual repurposing service
         return {
             "status": "success",
-            "content_id": content_id,
-            "platforms": platforms,
-            "variants_created": len(platforms)
+            "content_id": request.content_id,
+            "platforms": request.platforms,
+            "variants_created": len(request.platforms)
         }
     
     # Creative Spark endpoints

@@ -126,7 +126,7 @@ class CreativeSparkService:
         template = random.choice(templates)
         
         return {
-            "id": f"idea_{random.randint(1000, 9999)}",
+            "id": f"idea_{uuid.uuid4().hex[:8]}",
             "title": template["title"],
             "hook": template["hook"],
             "format": template["format"],
