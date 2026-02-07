@@ -1029,7 +1029,10 @@ window.Dashboard = {
     editAvatar,
     useAvatar,
     createAvatar,
-    showModal
+    showModal,
+    generateOutline,
+    useIdea,
+    generateVariations
 };
 
 // === New Feature Functions ===
