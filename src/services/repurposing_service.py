@@ -9,7 +9,6 @@ This service handles:
 """
 
 import structlog
-import asyncio
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from PIL import Image
