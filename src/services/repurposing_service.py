@@ -204,32 +204,29 @@ class ContentRepurposingService:
             target_height = specs["height"]
             
             # Open and resize image
-            img = Image.open(input_path)
-            
-            # Calculate aspect ratio
-            aspect = target_width / target_height
-            img_aspect = img.width / img.height
-            
-            # Crop or resize to match aspect ratio
-            if img_aspect > aspect:
-                # Image is wider, crop width
-                new_width = int(img.height * aspect)
-                left = (img.width - new_width) // 2
-                img = img.crop((left, 0, left + new_width, img.height))
-            elif img_aspect < aspect:
-                # Image is taller, crop height
-                new_height = int(img.width / aspect)
-                top = (img.height - new_height) // 2
-                img = img.crop((0, top, img.width, top + new_height))
-            
-            # Resize to target dimensions
-            img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
-            
-            # Apply brand styling
-            colors = self.brand_dna.get_brand_colors()
-            
-            # Save
-            img.save(output_path, quality=95)
+            with Image.open(input_path) as img:
+                
+                # Calculate aspect ratio
+                aspect = target_width / target_height
+                img_aspect = img.width / img.height
+                
+                # Crop or resize to match aspect ratio
+                if img_aspect > aspect:
+                    # Image is wider, crop width
+                    new_width = int(img.height * aspect)
+                    left = (img.width - new_width) // 2
+                    img = img.crop((left, 0, left + new_width, img.height))
+                elif img_aspect < aspect:
+                    # Image is taller, crop height
+                    new_height = int(img.width / aspect)
+                    top = (img.height - new_height) // 2
+                    img = img.crop((0, top, img.width, top + new_height))
+                
+                # Resize to target dimensions
+                img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+                
+                # Save
+                img.save(output_path, quality=95)
             
             logger.info(
                 "Repurposed image",
