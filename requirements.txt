@@ -28,8 +28,14 @@ spacy>=3.7.0
 # Sentiment Analysis for Baby Tools
 vaderSentiment>=3.3.2
 
-# Scene Detection for Baby Tools
+# Scene Detection for Repurposing Engine
 scenedetect>=0.6.2
+
+# Social Media APIs
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
 
 # Face Analysis
 deepface>=0.0.79
